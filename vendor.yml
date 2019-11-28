@@ -1,0 +1,7 @@
+# Vendored files and directories are excluded from language statistics.
+#
+# Distributions
+- (^|/)dist/
+#
+# Docs
+- (^|/)docs/
