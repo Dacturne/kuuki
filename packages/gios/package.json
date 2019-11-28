@@ -1,0 +1,37 @@
+{
+  "name": "@kuuki/gios",
+  "version": "1.0.0",
+  "description": "A simple api wrapper written in typescript for gios (CHIEF INSPECTORATE FOR ENVIRONMENTAL PROTECTION).",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "prebuild": "rimraf dist",
+    "build": "./node_modules/.bin/tsc",
+    "dev": "./node_modules/.bin/tsnd --ignore-watch node_modules --respawn --clear --no-notify ./src --watch",
+    "docs": "rimraf docs && typedoc --out docs src"
+  },
+  "keywords": [
+    "gios",
+    "api",
+    "javascript",
+    "node",
+    "js"
+  ],
+  "author": "Dacturne",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node-fetch": "^2.5.4",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.11",
+    "rimraf": "^3.0.0",
+    "ts-node-dev": "^1.0.0-pre.43",
+    "tsc": "^1.20150623.0",
+    "tslint": "^5.20.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-lines-between-class-members": "^1.3.6",
+    "typedoc": "^0.15.3",
+    "typescript": "^3.6.3"
+  }
+}
