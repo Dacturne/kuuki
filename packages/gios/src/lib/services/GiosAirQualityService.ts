@@ -34,7 +34,7 @@ export class GiosAirQualityService implements IPJPApi {
   ): Promise<MeasurementStationSensorRaw[]> {
     try {
       const response = await fetch(
-        `${this.domain}/${this.paths.sensorsPath}/${stationId}`
+        `${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`
       );
       const sensors: MeasurementStationSensorRaw[] = await response.json();
       return sensors;
@@ -48,7 +48,7 @@ export class GiosAirQualityService implements IPJPApi {
   ): Promise<SensorDataRaw> {
     try {
       const response = await fetch(
-        `${this.domain}/${this.paths.sensorDataPath}/${sensorId}`
+        `${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`
       );
       const data: SensorDataRaw = await response.json();
       return data;

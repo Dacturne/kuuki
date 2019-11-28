@@ -34,7 +34,7 @@ class GiosAirQualityService {
     getSensors(stationId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.sensorsPath}/${stationId}`);
+                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`);
                 const sensors = yield response.json();
                 return sensors;
             }
@@ -46,7 +46,7 @@ class GiosAirQualityService {
     getMeasurements(sensorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.sensorDataPath}/${sensorId}`);
+                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`);
                 const data = yield response.json();
                 return data;
             }
