@@ -15,6 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const config_1 = __importDefault(require("../config"));
 const utils_1 = require("../utils");
+const fetchRetry = (url, options, n) => __awaiter(void 0, void 0, void 0, function* () {
+    for (let i = 0; i < n; i++) {
+        try {
+            return yield node_fetch_1.default(url, options);
+        }
+        catch (err) {
+            const isLastAttempt = i + 1 === n;
+            if (isLastAttempt)
+                throw err;
+        }
+    }
+});
 class GiosAirQualityService {
     constructor(config) {
         this.bootstrapEndpoints(config);
@@ -22,7 +34,7 @@ class GiosAirQualityService {
     getStations() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield node_fetch_1.default(`${this.domain}/${config_1.default.BASE_PATH}/${this.paths.allStationsPath}`);
+                const response = yield fetchRetry(`${this.domain}/${config_1.default.BASE_PATH}/${this.paths.allStationsPath}`, {}, 5);
                 const stations = yield response.json();
                 return stations;
             }
@@ -34,7 +46,7 @@ class GiosAirQualityService {
     getSensors(stationId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`);
+                const response = yield fetchRetry(`${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`, {}, 5);
                 const sensors = yield response.json();
                 return sensors;
             }
@@ -46,7 +58,7 @@ class GiosAirQualityService {
     getMeasurements(sensorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield node_fetch_1.default(`${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`);
+                const response = yield fetchRetry(`${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`, {}, 5);
                 const data = yield response.json();
                 return data;
             }
