@@ -19,13 +19,8 @@
  */
 export type SensorDataRaw = {
   key: string;
-  values: [
-    {
-      /**
-       * yyyy-MM-dd HH:mm:ss localtime
-       */
-      date: string;
-      value: number;
-    }
-  ];
+  values: Array<{
+    date: string,
+    value: number
+  }>
 };
