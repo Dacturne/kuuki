@@ -11,48 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const MeasurementStation_1 = require("../models/MeasurementStation");
-const MeasurementStationSensor_1 = require("../models/MeasurementStationSensor");
+const Sensor_1 = require("../models/Sensor");
 const node_cron_1 = require("node-cron");
 class GiosAirQualityEventsService extends events_1.EventEmitter {
     constructor(api, refreshOptions) {
         super();
         this.api = api;
         this.refreshOptions = refreshOptions;
-        this.on("station_left", (id) => {
-            // remove the station from the store, as further polls will fail
-            console.log('listener is removing the station ', id);
-            const station = this._stations.find(s => {
-                return s.identifier.id === id;
-            });
-            console.log(this._stations.length);
-            this._stations.splice(this._stations.indexOf(station), 1);
-            console.log('removed...');
-            console.log(this._stations.length);
-        });
-        this.on("station_joined", (station) => __awaiter(this, void 0, void 0, function* () {
-            console.log('listener is adding the station with id', station.identifier.id);
-            // fetch sensors for the station
-            const sensors = (yield this.api.getSensors(station.identifier.id))
-                .map(s => new MeasurementStationSensor_1.MeasurementStationSensor(s));
-            station.sensors = sensors;
-            this._stations.push(station);
-        }));
-        this.on("sensor_left", (id, station) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
-            console.log(`Sensor: [${id}] is getting removed from station [${station.identifier.id}]`);
-            (_b = (_a = station) === null || _a === void 0 ? void 0 : _a.sensors) === null || _b === void 0 ? void 0 : _b.splice(this._stations.indexOf(station), 1);
-        }));
-        this.on("sensor_joined", (sensor, station) => __awaiter(this, void 0, void 0, function* () {
-            var _c, _d;
-            console.log(`Sensor: [${sensor.identifier.id}] is getting added to station [${station.identifier.id}]`);
-            (_d = (_c = station) === null || _c === void 0 ? void 0 : _c.sensors) === null || _d === void 0 ? void 0 : _d.push(sensor);
-        }));
-        this.on("sensor_data_error", (station, sensor, sensorDataRaw) => __awaiter(this, void 0, void 0, function* () {
-            console.log(`[Defective sensor]: ${sensor.identifier.id} at station ${station.identifier.id}`);
-        }));
-        this.on("sensor_data", (station, sensor, sensorDataRaw) => __awaiter(this, void 0, void 0, function* () {
-            // console.log(sensorDataRaw.values[0]);
-        }));
+        this.attachListeners();
     }
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -65,22 +31,24 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
             const sensorAssignmentPromises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
                 const sensorsRaw = yield this.api.getSensors(station.identifier.id);
                 sensors += sensorsRaw.length;
-                station.sensors = sensorsRaw.map(sensor => new MeasurementStationSensor_1.MeasurementStationSensor(sensor));
+                station.sensors = sensorsRaw.map(sensor => new Sensor_1.Sensor(sensor, this));
                 return Promise.resolve();
             }));
             yield Promise.all(sensorAssignmentPromises);
             console.log(`[Server] Fetched all sensors (${sensors})`);
-            // let measurementsCount = 0;
-            // const measurementPromises = this._stations.map(async (station) => {
-            //   const measurements = station.sensors.map(async (sensor) => {
-            //     sensor.latestMeasurement = await this.api.getMeasurements(sensor.identifier.id);
-            //     measurementsCount += 60;
-            //     return Promise.resolve();
-            //   });
-            //   return await Promise.all(measurements);
-            // })
-            // await Promise.all(measurementPromises);
-            // console.log(`Fetched all sensor measurements (${measurementsCount})`);
+            // assign measurements to the sensors
+            let measurementsCount = 0;
+            const measurementPromises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
+                const measurements = station.sensors.map((sensor) => __awaiter(this, void 0, void 0, function* () {
+                    const rawSensorData = yield this.api.getMeasurements(sensor.identifier.id);
+                    sensor.refreshData(rawSensorData);
+                    measurementsCount += rawSensorData.values.length;
+                    return Promise.resolve();
+                }));
+                return yield Promise.all(measurements);
+            }));
+            yield Promise.all(measurementPromises);
+            console.log(`[Server] Fetched all sensor measurements (${measurementsCount})`);
             console.log('[Server] Synced up...');
             this.assignSchedules();
             return Promise.resolve();
@@ -90,14 +58,18 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
         return this._stations;
     }
     getSensors() {
-        return this._stations.map(station => station.sensors);
+        const sensors = [];
+        for (let i = 0; i < this._stations.length; i++) {
+            sensors.push(...this._stations[i].sensors);
+        }
+        return sensors;
     }
     refreshStations() {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const refreshedStations = yield this.api.getStations();
             const prevIds = this._stations.map(station => station.identifier.id);
-            const newIds = refreshedStations.map(station => station.id).map(Number);
+            const newIds = refreshedStations.map(station => station.id);
             const missingIds = prevIds.filter(id => !newIds.includes(id));
             if (((_a = missingIds) === null || _a === void 0 ? void 0 : _a.length) > 0) {
                 missingIds.forEach(id => this.emit("station_left", id));
@@ -109,7 +81,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                     this.emit("station_joined", station);
                 });
             }
-            this.emit("station_refreshed");
+            this.emit("stations_refreshed");
             return Promise.resolve();
         });
     }
@@ -118,8 +90,8 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
             const promises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
                 const refreshedSensors = yield this.api.getSensors(station.identifier.id);
-                const prevIds = station.sensors.map(sensor => sensor.identifier.id).map(Number);
-                const newIds = refreshedSensors.map(sensor => sensor.id).map(Number);
+                const prevIds = station.sensors.map(sensor => sensor.identifier.id);
+                const newIds = refreshedSensors.map(sensor => sensor.id);
                 const missingIds = prevIds.filter(id => !newIds.includes(id));
                 if (((_a = missingIds) === null || _a === void 0 ? void 0 : _a.length) > 0) {
                     missingIds.forEach(id => {
@@ -129,7 +101,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 const addedIds = newIds.filter(id => !prevIds.includes(id));
                 if (((_b = addedIds) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                     addedIds.forEach(id => {
-                        const sensor = new MeasurementStationSensor_1.MeasurementStationSensor(refreshedSensors.find(s => s.id === id));
+                        const sensor = new Sensor_1.Sensor(refreshedSensors.find(s => s.id === id), this);
                         this.emit("sensor_joined", sensor, station);
                     });
                 }
@@ -143,25 +115,13 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
         return __awaiter(this, void 0, void 0, function* () {
             const promises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
                 const p = station.sensors.map((sensor) => __awaiter(this, void 0, void 0, function* () {
-                    var _a;
                     try {
                         const sensorDataRaw = yield this.api.getMeasurements(sensor.identifier.id);
-                        sensor.latestMeasurement = sensorDataRaw;
-                        if (((_a = sensorDataRaw) === null || _a === void 0 ? void 0 : _a.values.length) === 0) { // it's served but empty
-                            this.emit("sensor_data_error", station, sensor, sensorDataRaw);
-                            return Promise.resolve(true);
-                        }
-                        this.emit("sensor_data", station, sensor, sensorDataRaw);
-                        const measurement = {
-                            key: sensorDataRaw.key,
-                            date: sensorDataRaw.values[0].date,
-                            value: sensorDataRaw.values[0].value
-                        };
-                        this.emit("measurement", station, sensor, measurement);
+                        this.emit("data", station, sensor, sensorDataRaw);
+                        sensor.refreshData(sensorDataRaw);
                     }
                     catch (error) {
-                        console.log("failed to refresh measurement on ", sensor.identifier.id);
-                        return Promise.reject(error);
+                        throw error;
                     }
                     return Promise.resolve();
                 }));
@@ -169,31 +129,35 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 return Promise.resolve();
             }));
             yield Promise.all(promises);
+            this.emit("data_refreshed");
             return Promise.resolve();
         });
     }
     assignSchedules() {
         node_cron_1.schedule(this.refreshOptions.stations, () => __awaiter(this, void 0, void 0, function* () {
-            console.log("Refreshing stations... ");
+            console.log("[Started] Refreshing stations...");
             try {
                 yield this.refreshStations();
             }
             catch (error) {
-                console.error("Refreshing stations failed.");
+                console.error("[Failed] Refreshing stations.");
                 throw error;
             }
             finally {
-                // TODO: run sensors schedule if it was not set manually
+                console.log("[Finished] Refreshing stations.");
             }
         }));
         node_cron_1.schedule(this.refreshOptions.sensors, () => __awaiter(this, void 0, void 0, function* () {
-            console.log("Refreshing sensors...");
+            console.log("[Started] Refreshing sensors...");
             try {
                 yield this.refreshSensors();
             }
             catch (error) {
-                console.error("Refreshing sensors failed.");
+                console.error("[Failed] Refreshing sensors.");
                 throw error;
+            }
+            finally {
+                console.log("[Finished] Refreshing sensors.");
             }
         }));
         node_cron_1.schedule(this.refreshOptions.measurements, () => __awaiter(this, void 0, void 0, function* () {
@@ -202,12 +166,46 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 yield this.refreshMeasurements();
             }
             catch (error) {
-                console.error("Refreshing measurements failed.");
+                console.error("[Failed] Refreshing measurements.");
                 throw error;
             }
             finally {
                 console.log("[Finished] Getting measurements");
             }
+        }));
+    }
+    attachListeners() {
+        this.on("station_left", (id) => {
+            // remove the station from the store, as further polls will presumably fail
+            console.log('listener is removing the station ', id);
+            const station = this._stations.find(s => {
+                return s.identifier.id === id;
+            });
+            console.log(this._stations.length);
+            this._stations.splice(this._stations.indexOf(station), 1);
+            console.log('removed...');
+            console.log(this._stations.length);
+        });
+        this.on("station_joined", (station) => __awaiter(this, void 0, void 0, function* () {
+            console.log('listener is adding the station with id', station.identifier.id);
+            // fetch sensors for the station
+            const sensors = (yield this.api.getSensors(station.identifier.id))
+                .map(s => new Sensor_1.Sensor(s, this));
+            station.sensors = sensors;
+            this._stations.push(station);
+        }));
+        this.on("sensor_left", (id, station) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            console.log(`Sensor: [${id}] is getting removed from station [${station.identifier.id}]`);
+            (_b = (_a = station) === null || _a === void 0 ? void 0 : _a.sensors) === null || _b === void 0 ? void 0 : _b.splice(this._stations.indexOf(station), 1);
+        }));
+        this.on("sensor_joined", (sensor, station) => __awaiter(this, void 0, void 0, function* () {
+            var _c, _d;
+            console.log(`Sensor: [${sensor.identifier.id}] is getting added to station [${station.identifier.id}]`);
+            // fetch measurements for the sensor
+            const sensorRawData = yield this.api.getMeasurements(station.identifier.id);
+            sensor.refreshData(sensorRawData);
+            (_d = (_c = station) === null || _c === void 0 ? void 0 : _c.sensors) === null || _d === void 0 ? void 0 : _d.push(sensor);
         }));
     }
 }

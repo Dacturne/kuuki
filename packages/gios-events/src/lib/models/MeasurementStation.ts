@@ -1,19 +1,14 @@
 import { MeasurementStationRaw } from "@kuuki/gios/dist/lib/models/MeasurementStationRaw";
 import { EventEmitter } from "events";
-import { MeasurementStationSensor } from "./MeasurementStationSensor";
+import { Sensor } from "./Sensor";
 
 export type MeasurementStationIdentifier = {
   id: number;
 }
 
-// tslint:disable-next-line:interface-name
-export declare interface MeasurementStation {
-  on(event: "update", listener: Function): this;
-  on(event: "error", listener: Function): this;
-}
 export class MeasurementStation extends EventEmitter {
   private readonly _identifier: MeasurementStationIdentifier;
-  public sensors: MeasurementStationSensor[];
+  public sensors: Sensor[]; // TODO: change to Map<number, Sensor>?
   get identifier() {
     return this._identifier;
   }
