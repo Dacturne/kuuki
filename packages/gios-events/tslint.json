@@ -10,7 +10,12 @@
     "arrow-parens": false,
     "interface-over-type-literal": false,
     "no-namespace": false,
-    "lines-between-class-members": true
+    "lines-between-class-members": true,
+    "variable-name": {
+      "options": [
+        "allow-leading-underscore"
+      ]
+    }
   },
   "rulesDirectory": [
     "node_modules/tslint-lines-between-class-members"
