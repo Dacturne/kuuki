@@ -8,7 +8,7 @@
     "prebuild": "rimraf dist",
     "build": "./node_modules/.bin/tsc",
     "dev": "./node_modules/.bin/tsnd --ignore-watch node_modules --respawn --clear --no-notify ./src --watch",
-    "docs": "rimraf docs && typedoc --out docs src"
+    "docs": "rimraf ./../../docs/gios && typedoc --out ./../../docs/gios src"
   },
   "keywords": [
     "gios",
