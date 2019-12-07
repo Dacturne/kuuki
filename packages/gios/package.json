@@ -1,6 +1,6 @@
 {
   "name": "@kuuki/gios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple api wrapper written in typescript for gios (CHIEF INSPECTORATE FOR ENVIRONMENTAL PROTECTION).",
   "main": "dist/index.js",
   "scripts": {
@@ -33,5 +33,8 @@
     "tslint-lines-between-class-members": "^1.3.6",
     "typedoc": "^0.15.3",
     "typescript": "^3.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
