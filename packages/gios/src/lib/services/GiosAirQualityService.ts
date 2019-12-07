@@ -8,6 +8,17 @@ import { SensorDataRaw } from "../models/SensorDataRaw";
 import { PJPApiConfig } from "../models/PJPApiConfig";
 import { isTrailingSlash } from "../utils";
 
+const fetchRetry = async (url, options, n) => {
+  for (let i = 0; i < n; i++) {
+      try {
+          return await fetch(url, options);
+      } catch (err) {
+          const isLastAttempt = i + 1 === n;
+          if (isLastAttempt) throw err;
+      }
+  }
+};
+
 export class GiosAirQualityService implements IPJPApi {
 
   protected domain: string;
@@ -19,8 +30,10 @@ export class GiosAirQualityService implements IPJPApi {
 
   public async getStations(): Promise<MeasurementStationRaw[]> {
     try {
-      const response = await fetch(
-        `${this.domain}/${DEFAULTS.BASE_PATH}/${this.paths.allStationsPath}`
+      const response = await fetchRetry(
+        `${this.domain}/${DEFAULTS.BASE_PATH}/${this.paths.allStationsPath}`,
+        {},
+        5
       );
       const stations: MeasurementStationRaw[] = await response.json();
       return stations;
@@ -33,8 +46,10 @@ export class GiosAirQualityService implements IPJPApi {
     stationId: number | string
   ): Promise<MeasurementStationSensorRaw[]> {
     try {
-      const response = await fetch(
-        `${this.domain}/${this.paths.sensorsPath}/${stationId}`
+      const response = await fetchRetry(
+        `${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`,
+        {},
+        5
       );
       const sensors: MeasurementStationSensorRaw[] = await response.json();
       return sensors;
@@ -47,8 +62,10 @@ export class GiosAirQualityService implements IPJPApi {
     sensorId: number | string
   ): Promise<SensorDataRaw> {
     try {
-      const response = await fetch(
-        `${this.domain}/${this.paths.sensorDataPath}/${sensorId}`
+      const response = await fetchRetry(
+        `${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`,
+        {},
+        5
       );
       const data: SensorDataRaw = await response.json();
       return data;
