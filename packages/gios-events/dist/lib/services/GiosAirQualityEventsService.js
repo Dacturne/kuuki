@@ -13,6 +13,7 @@ const events_1 = require("events");
 const MeasurementStation_1 = require("../models/MeasurementStation");
 const Sensor_1 = require("../models/Sensor");
 const node_cron_1 = require("node-cron");
+const utils_1 = require("../utils");
 class GiosAirQualityEventsService extends events_1.EventEmitter {
     constructor(api, refreshOptions) {
         super();
@@ -25,7 +26,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
             // retrieve a list of stations
             const stationsRaw = yield this.api.getStations();
             this._stations = stationsRaw.map(station => new MeasurementStation_1.MeasurementStation(station));
-            console.log(`[Server] Fetched all stations (${this._stations.length})`);
+            console.log(`[Server] Fetched all stations (${this._stations.length}) [${utils_1.getTime()}]`);
             // assign sensors to the station
             let sensors = 0;
             const sensorAssignmentPromises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
@@ -35,7 +36,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 return Promise.resolve();
             }));
             yield Promise.all(sensorAssignmentPromises);
-            console.log(`[Server] Fetched all sensors (${sensors})`);
+            console.log(`[Server] Fetched all sensors (${sensors}) [${utils_1.getTime()}]`);
             // assign measurements to the sensors
             let measurementsCount = 0;
             const measurementPromises = this._stations.map((station) => __awaiter(this, void 0, void 0, function* () {
@@ -49,7 +50,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
             }));
             yield Promise.all(measurementPromises);
             console.log(`[Server] Fetched all sensor measurements (${measurementsCount})`);
-            console.log('[Server] Synced up...');
+            console.log(`[Server] Synced up... [${utils_1.getTime()}]`);
             this.assignSchedules();
             return Promise.resolve();
         });
@@ -59,8 +60,8 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     }
     getSensors() {
         const sensors = [];
-        for (let i = 0; i < this._stations.length; i++) {
-            sensors.push(...this._stations[i].sensors);
+        for (const station of this._stations) {
+            sensors.push(...station.sensors);
         }
         return sensors;
     }
@@ -135,7 +136,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     }
     assignSchedules() {
         node_cron_1.schedule(this.refreshOptions.stations, () => __awaiter(this, void 0, void 0, function* () {
-            console.log("[Started] Refreshing stations...");
+            console.log(`[Started] Refreshing stations... [${utils_1.getTime()}]`);
             try {
                 yield this.refreshStations();
             }
@@ -144,11 +145,11 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 throw error;
             }
             finally {
-                console.log("[Finished] Refreshing stations.");
+                console.log(`[Finished] Refreshing stations. [${utils_1.getTime()}]`);
             }
         }));
         node_cron_1.schedule(this.refreshOptions.sensors, () => __awaiter(this, void 0, void 0, function* () {
-            console.log("[Started] Refreshing sensors...");
+            console.log(`[Started] Refreshing sensors... [${utils_1.getTime()}]`);
             try {
                 yield this.refreshSensors();
             }
@@ -157,11 +158,11 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 throw error;
             }
             finally {
-                console.log("[Finished] Refreshing sensors.");
+                console.log(`[Finished] Refreshing sensors. [${utils_1.getTime()}]`);
             }
         }));
         node_cron_1.schedule(this.refreshOptions.measurements, () => __awaiter(this, void 0, void 0, function* () {
-            console.log("[Started] Getting measurements...");
+            console.log(`[Started] Getting measurements... [${utils_1.getTime()}]`);
             try {
                 yield this.refreshMeasurements();
             }
@@ -170,7 +171,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                 throw error;
             }
             finally {
-                console.log("[Finished] Getting measurements");
+                console.log(`[Finished] Getting measurements... [${utils_1.getTime()}]`);
             }
         }));
     }

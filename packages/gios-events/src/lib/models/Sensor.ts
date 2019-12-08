@@ -8,6 +8,7 @@ type SensorIdentifier = {
   id: number;
 }
 
+// tslint:disable-next-line: interface-name
 export declare interface Sensor {
   on(event: "update"|"measurement", listener: (measurement: Measurement) => void): this;
   addListener(event: "update"|"measurement", listener: (measurement: Measurement) => void): this;
@@ -50,7 +51,7 @@ export class Sensor extends EventEmitter {
         // compare values (we might have nulls)
         const index = this.measurements.findIndex((m, idx) => m.date === date);
         if (index >= 0) {
-          if (this.measurements[index].value != value) {
+          if (this.measurements[index].value !== value) {
             // trust the newer data (replace);
             this.measurements[index].value = value;
             this.emit("update", this.measurements[index]);
@@ -69,8 +70,9 @@ export class Sensor extends EventEmitter {
       // remove oldest elements if there are more than 62 elements
       const count = this.measurements.length;
       if (count > 62) {
-        for (let i=count-62; i>0; i--)
+        for (let i=count-62; i>0; i--) {
           this.measurements.pop();
+        }
       }
     }
   }

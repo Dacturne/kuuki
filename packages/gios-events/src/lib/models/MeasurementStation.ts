@@ -7,11 +7,12 @@ export type MeasurementStationIdentifier = {
 }
 
 export class MeasurementStation extends EventEmitter {
-  private readonly _identifier: MeasurementStationIdentifier;
-  public sensors: Sensor[]; // TODO: change to Map<number, Sensor>?
   get identifier() {
     return this._identifier;
   }
+  public sensors: Sensor[]; // TODO: change to Map<number, Sensor>?
+  private readonly _identifier: MeasurementStationIdentifier;
+
   constructor(protected readonly raw: MeasurementStationRaw) {
     super();
     const id: MeasurementStationIdentifier = {
