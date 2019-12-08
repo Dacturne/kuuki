@@ -42,7 +42,7 @@ api.getMeasurements(88).then((measurements) => {
 ```
 
 ## Documentation
-Generated docs are in the `/docs` folder, however the `d.ts` files should do if you have your code editor set up correctly.
+Generated docs are placed in the root `/docs` folder, you can preview them [under this link](https://dacturne.github.io/kuuki/gios/), however the `d.ts` files should do just fine if you have your code editor and environment set up correctly.
 
 ## Gios API
 The official API docs can be viewed at [Gios](https://powietrze.gios.gov.pl/pjp/content/api?lang=en).
