@@ -14,6 +14,7 @@ This library provides the following functionality:
 
 ## About
 This library focuses on providing a strictly typed API definition.
+If you need something more, check out [`@kuuki/gios-events`](https://dacturne.github.io/kuuki/gios-events/)
 
 ## Installation
 
