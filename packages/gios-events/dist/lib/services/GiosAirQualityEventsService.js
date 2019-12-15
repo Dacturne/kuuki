@@ -58,6 +58,11 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     getStations() {
         return this._stations;
     }
+    findStation(id) {
+        return this._stations.find((station, index) => {
+            return station.identifier.id === id;
+        });
+    }
     getSensors() {
         const sensors = [];
         for (const station of this._stations) {

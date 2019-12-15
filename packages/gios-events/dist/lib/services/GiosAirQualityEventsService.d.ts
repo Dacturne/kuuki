@@ -36,6 +36,7 @@ export declare class GiosAirQualityEventsService extends EventEmitter {
     constructor(api: GiosAirQualityService, refreshOptions: RefreshOptions);
     initialize(): Promise<void>;
     getStations(): MeasurementStation[];
+    findStation(id: number): MeasurementStation;
     getSensors(): Sensor[];
     refreshStations(): Promise<void>;
     refreshSensors(): Promise<void>;

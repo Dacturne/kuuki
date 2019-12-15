@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { MeasurementStation } from "../models/MeasurementStation";
+import { MeasurementStation, MeasurementStationIdentifier } from "../models/MeasurementStation";
 import { Sensor } from "../models/Sensor";
 import { GiosAirQualityService } from "@kuuki/gios";
 import { schedule } from "node-cron";
@@ -80,6 +80,12 @@ export class GiosAirQualityEventsService extends EventEmitter {
 
   public getStations(): MeasurementStation[] {
     return this._stations;
+  }
+
+  public findStation(id: number) {
+    return this._stations.find((station, index) => {
+      return station.identifier.id === id
+    });
   }
 
   public getSensors(): Sensor[] {
