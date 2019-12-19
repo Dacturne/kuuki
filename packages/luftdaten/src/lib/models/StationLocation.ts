@@ -4,6 +4,6 @@ export type StationLocation = {
   longitude: string;
   altitude: string;
   country: string;
-  exact_location: boolean;
-  indoor: boolean;
+  exact_location: number;
+  indoor: number;
 };

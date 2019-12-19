@@ -1,52 +1,55 @@
 import { MeasurementRaw } from "../models/MeasurementRaw";
 import { ILuftdatenService } from "../interfaces/ILuftdatenService";
-import fetch, { RequestInfo, RequestInit, Response } from "node-fetch";
+
+type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export class LuftdatenService implements ILuftdatenService {
 
-  protected fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>;
+  private _fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>;
 
-  constructor() {
-    this.fetch = fetch;
+  constructor(fetch: Fetch) {
+    this._fetch = fetch;
   }
 
   /**
    * Get raw measurements from the last 5 minutes
    *
-   * @returns {MeasurementRaw[]}
+   * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
-  public getLatestMeasurements(): MeasurementRaw[] {
-    throw new Error("Method not implemented.");
+  public async getLatestMeasurements(): Promise<MeasurementRaw[]> {
+    const response = await this._fetch("https://data.sensor.community/static/v1/data.json");
+    const measurements: MeasurementRaw[] = await response.json();;
+    return measurements;
   }
 
   /**
    * Get averaged out measurements from the last 5 minutes
    *
-   * @returns {MeasurementRaw[]}
+   * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
-  public getAverageLatestMeasurements(): MeasurementRaw[] {
+  public getAverageLatestMeasurements(): Promise<MeasurementRaw[]> {
     throw new Error("Method not implemented.");
   }
 
   /**
    * Get averaged out measurements from the last hour
    *
-   * @returns {MeasurementRaw[]}
+   * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
-  public getAverageLastHourMeasurements(): MeasurementRaw[] {
+  public getAverageLastHourMeasurements(): Promise<MeasurementRaw[]> {
     throw new Error("Method not implemented.");
   }
 
   /**
    * Get averaged out measurements from the last 24 hours
    *
-   * @returns {MeasurementRaw[]}
+   * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
-  public getAverageLastDayMeasurements(): MeasurementRaw[] {
+  public getAverageLastDayMeasurements(): Promise<MeasurementRaw[]> {
     throw new Error("Method not implemented.");
   }
 }

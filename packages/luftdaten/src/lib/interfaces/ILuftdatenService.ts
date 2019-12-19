@@ -7,14 +7,14 @@ export interface ILuftdatenService {
   // /type={sensor_type}
   // /box={lat1,lon1,lat2,lon2}
   // /country={country_code}
-  getLatestMeasurements(): MeasurementRaw[]; // RAW Readings (last 5min)
+  getLatestMeasurements(): Promise<MeasurementRaw[]>; // RAW Readings (last 5min)
 
   // https://api.luftdaten.info/static/v2/data.json
-  getAverageLatestMeasurements(): MeasurementRaw[]; // Average of last 5min (SERVICE TENDS TO BE DOWN)
+  getAverageLatestMeasurements(): Promise<MeasurementRaw[]>; // Average of last 5min (SERVICE TENDS TO BE DOWN)
 
   // https://data.sensor.community/static/v2/data.1h.json
-  getAverageLastHourMeasurements(): MeasurementRaw[]; // Average of last hour
+  getAverageLastHourMeasurements(): Promise<MeasurementRaw[]>; // Average of last hour
 
   // https://data.sensor.community/static/v2/data.24h.json
-  getAverageLastDayMeasurements(): MeasurementRaw[]; // Average of last 24 hours
+  getAverageLastDayMeasurements(): Promise<MeasurementRaw[]>; // Average of last 24 hours
 }
