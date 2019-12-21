@@ -1,14 +1,24 @@
 import { MeasurementRaw } from "../models/MeasurementRaw";
 import { ILuftdatenService } from "../interfaces/ILuftdatenService";
-
-type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
+import { Fetch } from "../models/Fetch";
+import { LuftdatenServiceConfig } from "../models/LuftdatenServiceConfig";
+import fetch from "node-fetch";
+import { ApiPaths } from "../models/ApiPaths";
+import DEFAULTS from "../config";
 
 export class LuftdatenService implements ILuftdatenService {
 
   private _fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>;
+  private readonly _apiPaths: ApiPaths;
 
-  constructor(fetch: Fetch) {
-    this._fetch = fetch;
+  constructor(config?: LuftdatenServiceConfig) {
+    this._fetch = config?.fetch ?? (fetch as any);
+    this._apiPaths = DEFAULTS.API_PATHS;
+    if (config?.paths) {
+      Object.keys(config.paths).forEach(path => {
+        this._apiPaths[path] = config.paths[path];
+      });
+    }
   }
 
   /**
@@ -18,7 +28,7 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public async getLatestMeasurements(): Promise<MeasurementRaw[]> {
-    const response = await this._fetch("https://data.sensor.community/static/v1/data.json");
+    const response = await this._fetch(this._apiPaths.LATEST_MEASUREMENTS_PATH);
     const measurements: MeasurementRaw[] = await response.json();;
     return measurements;
   }
