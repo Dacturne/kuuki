@@ -29,7 +29,30 @@ export class LuftdatenService implements ILuftdatenService {
    */
   public async getLatestMeasurements(): Promise<MeasurementRaw[]> {
     const response = await this._fetch(this._apiPaths.LATEST_MEASUREMENTS_PATH);
-    const measurements: MeasurementRaw[] = await response.json();;
+    const measurements: MeasurementRaw[] = await response.json();
+    return measurements;
+  }
+
+  /**
+   * Get raw measurements from the last 5 minutes
+   * API Query is filtered by sensor type
+   *
+   * @returns {Promise<MeasurementRaw[]>}
+   * @memberof LuftdatenService
+   */
+  public async getLatestMeasurementsBySensorType(sensorType: string|string[]): Promise<MeasurementRaw[]> {
+    if (sensorType.length === 0) {
+      return Promise.reject("Empty array passed to query")
+    }
+    const url = this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH + "type=";
+    let query: string;
+    if (Array.isArray(sensorType)) {
+      query = (sensorType as string[]).join(",")
+    } else {
+      query = sensorType;
+    }
+    const response = await this._fetch(url+query);
+    const measurements: MeasurementRaw[] = await response.json();
     return measurements;
   }
 

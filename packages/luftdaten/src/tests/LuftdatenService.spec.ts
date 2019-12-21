@@ -36,18 +36,20 @@ describe("LuftdatenService", () => {
       it("Retrieve getLatestMeasurements successfully", async () => {
         const mockedFetch = fetchMock
           .sandbox()
-          .mock(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
             status: 200,
             body: exampleMeasurements,
           });
         const ld = new LuftdatenService({ fetch: mockedFetch as any });
         await ld.getLatestMeasurements();
+        mockedFetch.reset();
       }).timeout(500);
+
       it("Retrieve getLatestMeasurements successfully with a custom path", async () => {
         const customPath = "http://example.org/custom";
         const mockedFetch = fetchMock
           .sandbox()
-          .mock(customPath, {
+          .getOnce(customPath, {
             status: 200,
             body: exampleMeasurements,
           });
@@ -59,11 +61,13 @@ describe("LuftdatenService", () => {
         expect(JSON.stringify(measurements)).to.equal(
           JSON.stringify(exampleMeasurements)
         );
-      })
+        mockedFetch.reset();
+      }).timeout(500);
+
       it("Return a properly mapped structure from getLatestMeasurements", async () => {
         const mockedFetch = fetchMock
           .sandbox()
-          .mock(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
             status: 200,
             body: exampleMeasurements,
           });
@@ -72,7 +76,67 @@ describe("LuftdatenService", () => {
         expect(JSON.stringify(measurements)).to.equal(
           JSON.stringify(exampleMeasurements)
         );
+        mockedFetch.reset();
       }).timeout(500);
-    })
+    });
+
+    describe("Get latest measurements filtered by sensor type", () => {
+      it("Retrieve getLatestMeasurementsBySensorType successfully", async () => {
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"type=SDS011", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch as any });
+        await ld.getLatestMeasurementsBySensorType("SDS011");
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Retrieve getLatestMeasurementsBySensorType successfully with a string parameter", async () => {
+        const customPath = "http://example.org/customSensorType/";
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(customPath+"type=BME280", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({
+          fetch: mockedFetch as any,
+          paths: { LATEST_MEASUREMENTS_FILTERED_PATH: customPath }
+        });
+        await ld.getLatestMeasurementsBySensorType("BME280");
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Retrieve getLatestMeasurementsBySensorType successfully with an array parameter", async () => {
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce("end:type=BME280,SDS011", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({
+          fetch: mockedFetch as any,
+        });
+        await ld.getLatestMeasurementsBySensorType(["BME280", "SDS011"]);
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Return a properly mapped structure from getLatestMeasurementsBySensorType", async () => {
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce("end:type=BME280", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch });
+        const measurements = await ld.getLatestMeasurementsBySensorType("BME280");
+        expect(JSON.stringify(measurements)).to.equal(
+          JSON.stringify(exampleMeasurements)
+        );
+        mockedFetch.reset();
+      }).timeout(500);
+    });
   });
 });

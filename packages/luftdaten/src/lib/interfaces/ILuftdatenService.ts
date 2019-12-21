@@ -9,12 +9,11 @@ export interface ILuftdatenService {
   // /country={country_code}
   getLatestMeasurements(): Promise<MeasurementRaw[]>; // RAW Readings (last 5min)
 
-  // https://api.luftdaten.info/static/v2/data.json
+  getLatestMeasurementsBySensorType(sensorType: string|string[]): Promise<MeasurementRaw[]>; // RAW Readings (last 5min) but filtered by type
+
   getAverageLatestMeasurements(): Promise<MeasurementRaw[]>; // Average of last 5min (SERVICE TENDS TO BE DOWN)
 
-  // https://data.sensor.community/static/v2/data.1h.json
   getAverageLastHourMeasurements(): Promise<MeasurementRaw[]>; // Average of last hour
 
-  // https://data.sensor.community/static/v2/data.24h.json
   getAverageLastDayMeasurements(): Promise<MeasurementRaw[]>; // Average of last 24 hours
 }
