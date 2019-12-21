@@ -43,7 +43,7 @@ describe("LuftdatenService", () => {
         const ld = new LuftdatenService({ fetch: mockedFetch as any });
         await ld.getLatestMeasurements();
       }).timeout(500);
-      it("Retrieve getLatestMeasurements sucessfuly with a custom path", async () => {
+      it("Retrieve getLatestMeasurements successfully with a custom path", async () => {
         const customPath = "http://example.org/custom";
         const mockedFetch = fetchMock
           .sandbox()
