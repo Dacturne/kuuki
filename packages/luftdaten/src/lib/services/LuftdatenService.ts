@@ -9,6 +9,7 @@ import { GetLatestMeasurementsCommand } from "../commands/GetLatestMeasurementsC
 import { GetLatestMeasurementsBySensorTypeCommand } from "../commands/GetLatestMeasurementsBySensorTypeCommand";
 import { GetLatestMeasurementsByBoxCommand } from "../commands/GetLatestMeasurementsByBoxCommand";
 import { GetLatestMeasurementsByAreaCommand } from "../commands/GetLatestMeasurementsByAreaCommand";
+import { GetLatestMeasurementsByCountryCommand } from "../commands/GetLatestMeasurementsByCountryCommand";
 
 export class LuftdatenService implements ILuftdatenService {
   private _fetch: IFetch;
@@ -102,6 +103,22 @@ export class LuftdatenService implements ILuftdatenService {
       lat,
       lon,
       dist
+    ).execute();
+  }
+
+  /**
+   * Get raw measurements from the last 5 minutes
+   * API Query is filtered by country
+   *
+   * @param {string} country
+   * @returns {Promise<MeasurementRaw[]>}
+   * @memberof LuftdatenService
+   */
+  public async getLatestMeasurementsByCountry(country: string): Promise<MeasurementRaw[]> {
+    return new GetLatestMeasurementsByCountryCommand(
+      this._fetch,
+      this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH,
+      country
     ).execute();
   }
 
