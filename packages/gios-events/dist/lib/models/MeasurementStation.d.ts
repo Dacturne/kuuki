@@ -7,8 +7,8 @@ export declare type MeasurementStationIdentifier = {
 };
 export declare class MeasurementStation extends EventEmitter {
     protected readonly raw: MeasurementStationRaw;
-    private readonly _identifier;
-    sensors: Sensor[];
     get identifier(): MeasurementStationIdentifier;
+    sensors: Sensor[];
+    private readonly _identifier;
     constructor(raw: MeasurementStationRaw);
 }

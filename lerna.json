@@ -2,5 +2,13 @@
   "packages": [
     "packages/*"
   ],
-  "version": "1.1.1"
+  "commands": {
+    "publish": {
+      "ignoreChanges": [
+        "**/*.md",
+        "**/examples/**"
+      ]
+    }
+  },
+  "version": "independent"
 }
