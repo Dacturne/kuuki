@@ -13,13 +13,18 @@ export interface ILuftdatenService {
     sensorType: string | string[]
   ): Promise<MeasurementRaw[]>; // RAW Readings (last 5min) but filtered by type
 
-  // getLatestMeasurementsByBox(
-  //   path: string,
-  //   lat1: number,
-  //   lon1: number,
-  //   lat2: number,
-  //   lon2: number
-  // ): Promise<MeasurementRaw[]>; // RAW Reading (last 5min) but filtered by box
+  getLatestMeasurementsByBox(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): Promise<MeasurementRaw[]>; // RAW Reading (last 5min) but filtered by box
+
+  getLatestMeasurementsByArea(
+    lat: number,
+    lon: number,
+    dist: number
+  ): Promise<MeasurementRaw[]>;
 
   getAverageLatestMeasurements(): Promise<MeasurementRaw[]>; // Average of last 5min (SERVICE TENDS TO BE DOWN)
 
