@@ -200,5 +200,50 @@ describe("LuftdatenService", () => {
         mockedFetch.reset();
       }).timeout(500);
     });
+
+    describe("Get latest measurements filtered by area", () => {
+      it("Retrieve getLatestMeasurementsByArea successfully", async () => {
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"area=52.1,13.1,10", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch as any });
+        await ld.getLatestMeasurementsByArea(52.1, 13.1, 10);
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Retrieve getLatestMeasurementsByArea successfully with a custom path", async () => {
+        const customPath = "http://example.org/customArea/";
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(customPath+"area=52.1,13.1,10", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({
+          fetch: mockedFetch as any,
+          paths: { LATEST_MEASUREMENTS_FILTERED_PATH: customPath }
+        });
+        await ld.getLatestMeasurementsByArea(52.1, 13.1, 10);
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Return a properly mapped structure from getLatestMeasurementsByArea", async () => {
+        const mockedFetch = fetchMock
+          .sandbox().reset()
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"area=52.1,13.1,10", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch as any });
+        const measurements = await ld.getLatestMeasurementsByArea(52.1, 13.1, 10);
+        expect(JSON.stringify(measurements)).to.equal(
+          JSON.stringify(exampleMeasurements)
+        );
+        mockedFetch.reset();
+      }).timeout(500);
+    });
   });
 });

@@ -8,6 +8,7 @@ import DEFAULTS from "../config";
 import { GetLatestMeasurementsCommand } from "../commands/GetLatestMeasurementsCommand";
 import { GetLatestMeasurementsBySensorTypeCommand } from "../commands/GetLatestMeasurementsBySensorTypeCommand";
 import { GetLatestMeasurementsByBoxCommand } from "../commands/GetLatestMeasurementsByBoxCommand";
+import { GetLatestMeasurementsByAreaCommand } from "../commands/GetLatestMeasurementsByAreaCommand";
 
 export class LuftdatenService implements ILuftdatenService {
   private _fetch: IFetch;
@@ -57,6 +58,10 @@ export class LuftdatenService implements ILuftdatenService {
    * Get raw measurements from the last 5 minutes
    * API Query is filtered by box
    *
+   * @param {number} lat1
+   * @param {number} lon1
+   * @param {number} lat2
+   * @param {number} lon2
    * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
@@ -73,6 +78,30 @@ export class LuftdatenService implements ILuftdatenService {
       lon1,
       lat2,
       lon2
+    ).execute();
+  }
+
+  /**
+   * Get raw measurements from the last 5 minutes
+   * API Query is filtered by area
+   *
+   * @param {number} lat
+   * @param {number} lon
+   * @param {number} dist
+   * @returns {Promise<MeasurementRaw[]>}
+   * @memberof LuftdatenService
+   */
+  public async getLatestMeasurementsByArea(
+    lat: number,
+    lon: number,
+    dist: number
+  ): Promise<MeasurementRaw[]> {
+    return new GetLatestMeasurementsByAreaCommand(
+      this._fetch,
+      this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH,
+      lat,
+      lon,
+      dist
     ).execute();
   }
 
