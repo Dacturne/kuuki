@@ -6,6 +6,7 @@ import fetch from "node-fetch";
 import { ApiPaths } from "../models/ApiPaths";
 import DEFAULTS from "../config";
 import { GetLatestMeasurementsCommand } from "../commands/GetLatestMeasurementsCommand";
+import { GetLatestMeasurementsBySensorTypeCommand } from "../commands/GetLatestMeasurementsBySensorTypeCommand";
 
 export class LuftdatenService implements ILuftdatenService {
   private _fetch: IFetch;
@@ -44,19 +45,11 @@ export class LuftdatenService implements ILuftdatenService {
   public async getLatestMeasurementsBySensorType(
     sensorType: string | string[]
   ): Promise<MeasurementRaw[]> {
-    if (sensorType.length === 0) {
-      return Promise.reject("Empty array passed to query");
-    }
-    const url = this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH + "type=";
-    let query: string;
-    if (Array.isArray(sensorType)) {
-      query = (sensorType as string[]).join(",");
-    } else {
-      query = sensorType;
-    }
-    const response = await this._fetch(url + query);
-    const measurements: MeasurementRaw[] = await response.json();
-    return measurements;
+    return new GetLatestMeasurementsBySensorTypeCommand(
+      this._fetch,
+      sensorType,
+      this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH
+    ).execute();
   }
 
   /**
