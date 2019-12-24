@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, assert } from "chai";
 import "mocha";
 import fetchMock from "fetch-mock";
 import { LuftdatenService } from "..";
@@ -132,6 +132,68 @@ describe("LuftdatenService", () => {
           });
         const ld = new LuftdatenService({ fetch: mockedFetch });
         const measurements = await ld.getLatestMeasurementsBySensorType("BME280");
+        expect(JSON.stringify(measurements)).to.equal(
+          JSON.stringify(exampleMeasurements)
+        );
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Reject promise if an empty array was passed as a parameter", async () => {
+        const mockedFetch = fetchMock
+        .sandbox()
+        .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"type=", {
+          status: 200,
+          body: exampleMeasurements
+        });
+        const ld = new LuftdatenService({ fetch: mockedFetch });
+        try {
+          await ld.getLatestMeasurementsBySensorType([]);
+          assert.fail("was supposed to fail");
+        } catch(error) {
+          expect(error).to.equal("Empty array passed to query");
+        }
+        mockedFetch.reset();
+      }).timeout(500);
+    });
+
+    describe("Get latest measurements filtered by box", () => {
+      it("Retrieve getLatestMeasurementsByBox successfully", async () => {
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"box=52.1,13.1,53.5,13.5", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch as any });
+        await ld.getLatestMeasurementsByBox(52.1, 13.1, 53.5, 13.5);
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Retrieve getLatestMeasurementsByBox successfully with a custom path", async () => {
+        const customPath = "http://example.org/customBox/";
+        const mockedFetch = fetchMock
+          .sandbox()
+          .getOnce(customPath+"box=52.1,13.1,53.5,13.5", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({
+          fetch: mockedFetch as any,
+          paths: { LATEST_MEASUREMENTS_FILTERED_PATH: customPath }
+        });
+        await ld.getLatestMeasurementsByBox(52.1, 13.1, 53.5, 13.5);
+        mockedFetch.reset();
+      }).timeout(500);
+
+      it("Return a properly mapped structure from getLatestMeasurementsByBox", async () => {
+        const mockedFetch = fetchMock
+          .sandbox().reset()
+          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_FILTERED_PATH+"box=52.1,13.1,53.5,13.5", {
+            status: 200,
+            body: exampleMeasurements,
+          });
+        const ld = new LuftdatenService({ fetch: mockedFetch as any });
+        const measurements = await ld.getLatestMeasurementsByBox(52.1, 13.1, 53.5, 13.5);
         expect(JSON.stringify(measurements)).to.equal(
           JSON.stringify(exampleMeasurements)
         );

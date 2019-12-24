@@ -9,7 +9,17 @@ export interface ILuftdatenService {
   // /country={country_code}
   getLatestMeasurements(): Promise<MeasurementRaw[]>; // RAW Readings (last 5min)
 
-  getLatestMeasurementsBySensorType(sensorType: string|string[]): Promise<MeasurementRaw[]>; // RAW Readings (last 5min) but filtered by type
+  getLatestMeasurementsBySensorType(
+    sensorType: string | string[]
+  ): Promise<MeasurementRaw[]>; // RAW Readings (last 5min) but filtered by type
+
+  // getLatestMeasurementsByBox(
+  //   path: string,
+  //   lat1: number,
+  //   lon1: number,
+  //   lat2: number,
+  //   lon2: number
+  // ): Promise<MeasurementRaw[]>; // RAW Reading (last 5min) but filtered by box
 
   getAverageLatestMeasurements(): Promise<MeasurementRaw[]>; // Average of last 5min (SERVICE TENDS TO BE DOWN)
 
