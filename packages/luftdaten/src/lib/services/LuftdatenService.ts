@@ -1,14 +1,14 @@
 import { MeasurementRaw } from "../models/MeasurementRaw";
 import { ILuftdatenService } from "../interfaces/ILuftdatenService";
-import { Fetch } from "../models/Fetch";
+import { IFetch } from "../interfaces/IFetch";
 import { LuftdatenServiceConfig } from "../models/LuftdatenServiceConfig";
 import fetch from "node-fetch";
 import { ApiPaths } from "../models/ApiPaths";
 import DEFAULTS from "../config";
+import { GetLatestMeasurementsCommand } from "../commands/GetLatestMeasurementsCommand";
 
 export class LuftdatenService implements ILuftdatenService {
-
-  private _fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>;
+  private _fetch: IFetch;
   private readonly _apiPaths: ApiPaths;
 
   constructor(config?: LuftdatenServiceConfig) {
@@ -28,9 +28,10 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public async getLatestMeasurements(): Promise<MeasurementRaw[]> {
-    const response = await this._fetch(this._apiPaths.LATEST_MEASUREMENTS_PATH);
-    const measurements: MeasurementRaw[] = await response.json();
-    return measurements;
+    return new GetLatestMeasurementsCommand(
+      this._fetch,
+      this._apiPaths.LATEST_MEASUREMENTS_PATH
+    ).execute();
   }
 
   /**
@@ -40,18 +41,20 @@ export class LuftdatenService implements ILuftdatenService {
    * @returns {Promise<MeasurementRaw[]>}
    * @memberof LuftdatenService
    */
-  public async getLatestMeasurementsBySensorType(sensorType: string|string[]): Promise<MeasurementRaw[]> {
+  public async getLatestMeasurementsBySensorType(
+    sensorType: string | string[]
+  ): Promise<MeasurementRaw[]> {
     if (sensorType.length === 0) {
-      return Promise.reject("Empty array passed to query")
+      return Promise.reject("Empty array passed to query");
     }
     const url = this._apiPaths.LATEST_MEASUREMENTS_FILTERED_PATH + "type=";
     let query: string;
     if (Array.isArray(sensorType)) {
-      query = (sensorType as string[]).join(",")
+      query = (sensorType as string[]).join(",");
     } else {
       query = sensorType;
     }
-    const response = await this._fetch(url+query);
+    const response = await this._fetch(url + query);
     const measurements: MeasurementRaw[] = await response.json();
     return measurements;
   }
