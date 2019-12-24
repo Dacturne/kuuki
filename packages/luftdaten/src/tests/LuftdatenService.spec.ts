@@ -32,52 +32,195 @@ describe("LuftdatenService", () => {
   });
 
   describe("Service should", () => {
-    describe("Get latest measurements", () => {
-      it("Retrieve getLatestMeasurements successfully", async () => {
-        const mockedFetch = fetchMock
-          .sandbox()
-          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
-            status: 200,
-            body: exampleMeasurements,
-          });
-        const ld = new LuftdatenService({ fetch: mockedFetch as any });
-        await ld.getLatestMeasurements();
-        mockedFetch.reset();
-      }).timeout(500);
+    describe("Get measurements", () => {
+      describe("Latest RAW", () => {
+        it("Retrieve getLatestMeasurements successfully", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          await ld.getLatestMeasurements();
+          mockedFetch.reset();
+        }).timeout(500);
 
-      it("Retrieve getLatestMeasurements successfully with a custom path", async () => {
-        const customPath = "http://example.org/custom";
-        const mockedFetch = fetchMock
-          .sandbox()
-          .getOnce(customPath, {
-            status: 200,
-            body: exampleMeasurements,
+        it("Retrieve getLatestMeasurements successfully with a custom path", async () => {
+          const customPath = "http://example.org/custom";
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(customPath, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({
+            fetch: mockedFetch as any,
+            paths: { LATEST_MEASUREMENTS_PATH: customPath }
           });
-        const ld = new LuftdatenService({
-          fetch: mockedFetch as any,
-          paths: { LATEST_MEASUREMENTS_PATH: customPath }
-        });
-        const measurements = await ld.getLatestMeasurements();
-        expect(JSON.stringify(measurements)).to.equal(
-          JSON.stringify(exampleMeasurements)
-        );
-        mockedFetch.reset();
-      }).timeout(500);
+          const measurements = await ld.getLatestMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
 
-      it("Return a properly mapped structure from getLatestMeasurements", async () => {
-        const mockedFetch = fetchMock
-          .sandbox()
-          .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
-            status: 200,
-            body: exampleMeasurements,
+        it("Return a properly mapped structure from getLatestMeasurements", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.LATEST_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          const measurements = await ld.getLatestMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+      });
+      describe("Latest AVG", () => {
+        it("Retrieve getAverageLatestMeasurements successfully", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LATEST_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          await ld.getAverageLatestMeasurements();
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Retrieve getAverageLatestMeasurements successfully with a custom path", async () => {
+          const customPath = "http://example.org/customAverage";
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(customPath, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({
+            fetch: mockedFetch as any,
+            paths: { AVERAGE_LATEST_MEASUREMENTS_PATH: customPath }
           });
-        const ld = new LuftdatenService({ fetch: mockedFetch as any });
-        const measurements = await ld.getLatestMeasurements();
-        expect(JSON.stringify(measurements)).to.equal(
-          JSON.stringify(exampleMeasurements)
-        );
-        mockedFetch.reset();
-      }).timeout(500);
+          const measurements = await ld.getAverageLatestMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Return a properly mapped structure from getAverageLatestMeasurements", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LATEST_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          const measurements = await ld.getAverageLatestMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+      });
+      describe("Last hour AVG", () => {
+        it("Retrieve getAverageLastHourMeasurements successfully", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LAST_HOUR_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          await ld.getAverageLastHourMeasurements();
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Retrieve getAverageLastHourMeasurements successfully with a custom path", async () => {
+          const customPath = "http://example.org/customAverageHour";
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(customPath, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({
+            fetch: mockedFetch as any,
+            paths: { AVERAGE_LAST_HOUR_MEASUREMENTS_PATH: customPath }
+          });
+          const measurements = await ld.getAverageLastHourMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Return a properly mapped structure from getAverageLastHourMeasurements", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LAST_HOUR_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          const measurements = await ld.getAverageLastHourMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+      });
+      describe("Last day AVG", () => {
+        it("Retrieve getAverageLastDayMeasurements successfully", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LAST_DAY_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          await ld.getAverageLastDayMeasurements();
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Retrieve getAverageLastDayMeasurements successfully with a custom path", async () => {
+          const customPath = "http://example.org/customAverageDay";
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(customPath, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({
+            fetch: mockedFetch as any,
+            paths: { AVERAGE_LAST_DAY_MEASUREMENTS_PATH: customPath }
+          });
+          const measurements = await ld.getAverageLastDayMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+
+        it("Return a properly mapped structure from getAverageLastDayMeasurements", async () => {
+          const mockedFetch = fetchMock
+            .sandbox()
+            .getOnce(DEFAULTS.API_PATHS.AVERAGE_LAST_DAY_MEASUREMENTS_PATH, {
+              status: 200,
+              body: exampleMeasurements,
+            });
+          const ld = new LuftdatenService({ fetch: mockedFetch as any });
+          const measurements = await ld.getAverageLastDayMeasurements();
+          expect(JSON.stringify(measurements)).to.equal(
+            JSON.stringify(exampleMeasurements)
+          );
+          mockedFetch.reset();
+        }).timeout(500);
+      });
     });
 
     describe("Get latest measurements filtered by sensor type", () => {

@@ -5,11 +5,11 @@ import { LuftdatenServiceConfig } from "../models/LuftdatenServiceConfig";
 import fetch from "node-fetch";
 import { ApiPaths } from "../models/ApiPaths";
 import DEFAULTS from "../config";
-import { GetLatestMeasurementsCommand } from "../commands/GetLatestMeasurementsCommand";
 import { GetLatestMeasurementsBySensorTypeCommand } from "../commands/GetLatestMeasurementsBySensorTypeCommand";
 import { GetLatestMeasurementsByBoxCommand } from "../commands/GetLatestMeasurementsByBoxCommand";
 import { GetLatestMeasurementsByAreaCommand } from "../commands/GetLatestMeasurementsByAreaCommand";
 import { GetLatestMeasurementsByCountryCommand } from "../commands/GetLatestMeasurementsByCountryCommand";
+import { GetMeasurementsCommand } from "../commands/GetMeasurementsCommand";
 
 export class LuftdatenService implements ILuftdatenService {
   private _fetch: IFetch;
@@ -32,7 +32,7 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public async getLatestMeasurements(): Promise<MeasurementRaw[]> {
-    return new GetLatestMeasurementsCommand(
+    return new GetMeasurementsCommand(
       this._fetch,
       this._apiPaths.LATEST_MEASUREMENTS_PATH
     ).execute();
@@ -129,7 +129,10 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public getAverageLatestMeasurements(): Promise<MeasurementRaw[]> {
-    throw new Error("Method not implemented.");
+    return new GetMeasurementsCommand(
+      this._fetch,
+      this._apiPaths.AVERAGE_LATEST_MEASUREMENTS_PATH
+    ).execute();
   }
 
   /**
@@ -139,7 +142,10 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public getAverageLastHourMeasurements(): Promise<MeasurementRaw[]> {
-    throw new Error("Method not implemented.");
+    return new GetMeasurementsCommand(
+      this._fetch,
+      this._apiPaths.AVERAGE_LAST_HOUR_MEASUREMENTS_PATH
+    ).execute();
   }
 
   /**
@@ -149,6 +155,9 @@ export class LuftdatenService implements ILuftdatenService {
    * @memberof LuftdatenService
    */
   public getAverageLastDayMeasurements(): Promise<MeasurementRaw[]> {
-    throw new Error("Method not implemented.");
+    return new GetMeasurementsCommand(
+      this._fetch,
+      this._apiPaths.AVERAGE_LAST_DAY_MEASUREMENTS_PATH
+    ).execute();
   }
 }
