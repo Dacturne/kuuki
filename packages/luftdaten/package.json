@@ -1,6 +1,6 @@
 {
   "name": "@kuuki/luftdaten",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A simple api wrapper written in typescript for luftdaten",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "./node_modules/.bin/tsc",
     "dev": "./node_modules/.bin/tsnd --ignore-watch node_modules --respawn --clear --no-notify ./src --watch",
-    "docs": "rimraf ./../../docs/gios && typedoc --out ./../../docs/gios src"
+    "docs": "rimraf ./../../docs/luftdaten && typedoc --out ./../../docs/luftdaten src"
   },
   "keywords": [
     "luftdaten",
@@ -41,7 +41,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-lines-between-class-members": "^1.3.6",
     "typedoc": "^0.15.3",
-    "typescript": "^3.6.3"
+    "typescript": "^3.8.0-dev.20191224"
   },
   "publishConfig": {
     "access": "public"

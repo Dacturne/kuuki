@@ -1,6 +1,7 @@
-import { Fetch } from "./Fetch";
 import { ApiPaths } from "./ApiPaths";
+import { IFetch } from "../interfaces/IFetch";
+
 export type LuftdatenServiceConfig = {
   paths?: ApiPaths;
-  fetch?: Fetch;
+  fetch?: IFetch;
 };
