@@ -2,7 +2,7 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ![GitHub](https://img.shields.io/github/license/dacturne/kuuki)
 
-Project that aims to improve accessibility of open data APIs in the sector of air quality. 
+A project that aims to improve the accessibility to open data APIs in the environmental sector regarding air quality.
 
 ### Features
 Gather measurements from multiple providers and data sources with the usage of strictly typed libraries.
