@@ -1,6 +1,6 @@
 {
   "name": "@kuuki/luftdaten-events",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An enhanced version of @kuuki/luftdaten with events support",
   "main": "dist/index.js",
   "scripts": {
