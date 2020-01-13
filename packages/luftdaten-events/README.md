@@ -10,13 +10,13 @@ This library provides the following functionality:
 - [x] Load the state from a leveldb automatically.
 - [x] Poll API endpoints with a crontab setting.
 - [x] Retrieve all latest (5min) measurements.
-- [x] Retrieve all latest measurements with `sensor type` filter.
-- [x] Retrieve all latest measurements with `area` filter.
-- [x] Retrieve all latest measurements with `box` filter.
-- [x] Retrieve all latest measurements with `country` filter.
-- [x] Retrieve an average of all latest measurements of a sensor (5min).
-- [x] Retrieve an average of all measurements of a sensor (1h).
-- [x] Retrieve an average of all measurements of a sensor (24h).
+- [ ] Retrieve all latest measurements with `sensor type` filter.
+- [ ] Retrieve all latest measurements with `area` filter.
+- [ ] Retrieve all latest measurements with `box` filter.
+- [ ] Retrieve all latest measurements with `country` filter.
+- [ ] Retrieve an average of all latest measurements of a sensor (5min).
+- [ ] Retrieve an average of all measurements of a sensor (1h).
+- [ ] Retrieve an average of all measurements of a sensor (24h).
 - [x] Strictly typed models.
 
 Provided events:
