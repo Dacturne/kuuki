@@ -1,6 +1,6 @@
 {
   "name": "@kuuki/luftdaten",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A simple api wrapper written in typescript for luftdaten",
   "main": "dist/index.js",
   "scripts": {
