@@ -6,3 +6,6 @@ src/
 .prettierrc
 tsconfig.json
 tslint.json
+.nyc_output/
+.nycrc.json
+db/
