@@ -18,3 +18,32 @@ Have everything in one place and easily configurable.
 - `@kuuki/gios-events` - listen to changes in `gios`
 - `@kuuki/luftdaten` - a simple Luftdaten API wrapper
 - `@kuuki/luftdaten-events` - listen to changes in `luftdaten`
+
+### Brief overview of the folder structure
+```
+📂kuuki
+ ┣ 📄docs                     # Root docs folder
+ ┃ ┣ 📂gios
+ ┃ ┣ 📂gios-events
+ ┃ ┣ 📂luftdaten
+ ┃ ┣ 📂luftdaten-events
+ ┣ 📂packages
+ ┃ ┣ 📦gios                   # Package name
+ ┃ ┃ ┣ 💾dist                 # Compiled files are placed in dist
+ ┃ ┃ ┣ 📂examples             # Examples folder
+ ┃ ┃ ┃ ┗ 📂basic-example
+ ┃ ┃ ┣ 💻src                  # Source code folder
+ ┃ ┣ 📦gios-events
+ ┃ ┃ ┣ 💾dist
+ ┃ ┃ ┣ 📂examples
+ ┃ ┃ ┃ ┗ 📂basic-example
+ ┃ ┃ ┣ 💻src
+ ┃ ┣ 📦luftdaten
+ ┃ ┃ ┣ 💾dist
+ ┃ ┃ ┣ 📂src
+ ┃ ┣ 📦luftdaten-events
+ ┃ ┃ ┣ 💾dist
+ ┃ ┃ ┣ 📂examples
+ ┃ ┃ ┃ ┗ 📂basic-example
+ ┃ ┃ ┣ 💻src
+```
