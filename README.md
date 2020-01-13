@@ -14,10 +14,10 @@ Have everything in one place and easily configurable.
 - choose your own storage method (hook up an event consumer)
 
 ### Packages
-- `@kuuki/gios` - a simple GIOS API wrapper
-- `@kuuki/gios-events` - listen to changes in `gios`
-- `@kuuki/luftdaten` - a simple Luftdaten API wrapper
-- `@kuuki/luftdaten-events` - listen to changes in `luftdaten`
+- 📦[`@kuuki/gios`](https://github.com/Dacturne/kuuki/tree/master/packages/gios/) - a simple GIOS API wrapper
+- 📦[`@kuuki/gios-events`](https://github.com/Dacturne/kuuki/tree/master/packages/gios-events/) - listen to changes in `gios`
+- 📦[`@kuuki/luftdaten`](https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten/) - a simple Luftdaten API wrapper
+- 📦[`@kuuki/luftdaten-events`](https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten-events/) - listen to changes in `luftdaten`
 
 ### Brief overview of the folder structure
 ```
