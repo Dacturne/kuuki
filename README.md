@@ -40,7 +40,7 @@ Have everything in one place and easily configurable.
  ┃ ┃ ┣ 💻src
  ┃ ┣ 📦luftdaten
  ┃ ┃ ┣ 💾dist
- ┃ ┃ ┣ 📂src
+ ┃ ┃ ┣ 💻src
  ┃ ┣ 📦luftdaten-events
  ┃ ┃ ┣ 💾dist
  ┃ ┃ ┣ 📂examples
