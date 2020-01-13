@@ -27,7 +27,7 @@ Provided events:
 ## About
 This library focuses on providing a strictly type API definition and acces to `EventEmitter`, exposing further functionality. What's happening under the hood is, that the state is stored in LevelDB and updated once in a while, emitting a `measurement` event to the listeners on each unique measurement insert operation.
 
-If you only need something simple - check out [`@kuuki/lufdaten`](https://https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten).
+If you only need something simple - check out [`@kuuki/lufdaten`](https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten).
 
 ## Installation
 `@kuuki/luftdaten-events` requires [Node.js](https://nodejs.org/) to run on the backend.
