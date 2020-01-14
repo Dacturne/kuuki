@@ -20,7 +20,7 @@ class LuftdatenEventsService extends events_1.EventEmitter {
     }
     track(opts) {
         return __awaiter(this, void 0, void 0, function* () {
-            // track what we want
+            // Track what we want
             Object.keys(opts).forEach((key) => __awaiter(this, void 0, void 0, function* () {
                 console.log("Track: ", key);
                 console.log("with crontab: ", opts[key].crontab);
@@ -28,29 +28,36 @@ class LuftdatenEventsService extends events_1.EventEmitter {
                 delete args.crontab;
                 console.log("and args:");
                 console.log(args);
-                // ugly for now
+                // Ugly for now TODO: Think of a nicer way for invocation
                 if (key === "getAverageLastHourMeasurements") {
-                    yield this._api.getAverageLastHourMeasurements();
+                    throw new Error('Not implemented');
+                    // await this._api.getAverageLastHourMeasurements();
                 }
                 if (key === "getAverageLatestMeasurements") {
-                    yield this._api.getAverageLatestMeasurements();
+                    throw new Error('Not implemented');
+                    // await this._api.getAverageLatestMeasurements();
                 }
                 if (key === "getLatestMeasurements") {
                     console.log(`Scheduled [ getLatestMeasurements ] with [ ${opts[key].crontab} ]`);
                     node_cron_1.schedule(opts[key].crontab, this._getLatestMeasurementsHandler.bind(this));
                 }
                 if (key === "getLatestMeasurementsByArea") {
-                    yield this._api.getLatestMeasurementsByArea(args.lat, args.lon, args.dist);
+                    throw new Error('Not implemented');
+                    // await this._api.getLatestMeasurementsByArea(args.lat, args.lon, args.dist);
                 }
                 if (key === "getLatestMeasurementsByBox") {
-                    yield this._api.getLatestMeasurementsByBox(args.lat1, args.lon1, args.lat2, args.lon2);
+                    throw new Error('Not implemented');
+                    // await this._api.getLatestMeasurementsByBox(args.lat1, args.lon1, args.lat2, args.lon2);
                 }
                 if (key === "getLatestMeasurementsByCountry") {
-                    yield this._api.getLatestMeasurementsByCountry(args.country);
+                    throw new Error('Not implemented');
+                    // await this._api.getLatestMeasurementsByCountry(args.country);
                 }
                 if (key === "getLatestMeasurementsBySensorType") {
-                    yield this._api.getLatestMeasurementsBySensorType(args.sensorType);
+                    throw new Error('Not implemented');
+                    // await this._api.getLatestMeasurementsBySensorType(args.sensorType);
                 }
+                return Promise.resolve();
             }));
         });
     }

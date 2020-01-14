@@ -55,6 +55,7 @@ export class LuftdatenEventsService extends EventEmitter {
         throw new Error('Not implemented');
         // await this._api.getLatestMeasurementsBySensorType(args.sensorType);
       }
+      return Promise.resolve();
     });
   }
 
