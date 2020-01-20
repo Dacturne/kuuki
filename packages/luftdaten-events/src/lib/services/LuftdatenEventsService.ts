@@ -5,6 +5,13 @@ import { MeasurementRaw } from "@kuuki/luftdaten/dist/lib/models/MeasurementRaw"
 import { MeasurementRepository } from "../repositories/MeasurementRepository";
 import { schedule } from "node-cron"
 
+// tslint:disable-next-line:interface-name
+export declare interface LuftdatenEventsService {
+  on(event: "measurement", listener: (payload: { source: string, data: MeasurementRaw }) => void): this;
+  addListener(event: "measurement", listener: (payload: { source: string, data: MeasurementRaw }) => void): this;
+  emit(event: "measurement", payload: { source: string, data: MeasurementRaw }): boolean;
+}
+
 export class LuftdatenEventsService extends EventEmitter {
   constructor(private _api: LuftdatenService, private _repo: MeasurementRepository, private refreshOptions?: RefreshOptions) {
     super();
@@ -48,6 +55,7 @@ export class LuftdatenEventsService extends EventEmitter {
         throw new Error('Not implemented');
         // await this._api.getLatestMeasurementsBySensorType(args.sensorType);
       }
+      return Promise.resolve();
     });
   }
 

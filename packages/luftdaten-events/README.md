@@ -10,13 +10,13 @@ This library provides the following functionality:
 - [x] Load the state from a leveldb automatically.
 - [x] Poll API endpoints with a crontab setting.
 - [x] Retrieve all latest (5min) measurements.
-- [x] Retrieve all latest measurements with `sensor type` filter.
-- [x] Retrieve all latest measurements with `area` filter.
-- [x] Retrieve all latest measurements with `box` filter.
-- [x] Retrieve all latest measurements with `country` filter.
-- [x] Retrieve an average of all latest measurements of a sensor (5min).
-- [x] Retrieve an average of all measurements of a sensor (1h).
-- [x] Retrieve an average of all measurements of a sensor (24h).
+- [ ] Retrieve all latest measurements with `sensor type` filter.
+- [ ] Retrieve all latest measurements with `area` filter.
+- [ ] Retrieve all latest measurements with `box` filter.
+- [ ] Retrieve all latest measurements with `country` filter.
+- [ ] Retrieve an average of all latest measurements of a sensor (5min).
+- [ ] Retrieve an average of all measurements of a sensor (1h).
+- [ ] Retrieve an average of all measurements of a sensor (24h).
 - [x] Strictly typed models.
 
 Provided events:
@@ -27,7 +27,7 @@ Provided events:
 ## About
 This library focuses on providing a strictly type API definition and acces to `EventEmitter`, exposing further functionality. What's happening under the hood is, that the state is stored in LevelDB and updated once in a while, emitting a `measurement` event to the listeners on each unique measurement insert operation.
 
-If you only need something simple - check out [`@kuuki/lufdaten`](https://https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten).
+If you only need something simple - check out [`@kuuki/lufdaten`](https://github.com/Dacturne/kuuki/tree/master/packages/luftdaten).
 
 ## Installation
 `@kuuki/luftdaten-events` requires [Node.js](https://nodejs.org/) to run on the backend.
@@ -46,7 +46,7 @@ const repo = new luftdatenEvents.MeasurementRepository();
 const lde = new luftdatenEvents.LuftdatenEventsService(ld, repo);
 
 (async () => {
-  lde.track({ // insert only the endpoints you want to poll for
+  await lde.track({ // insert only the endpoints you want to poll for
     getLatestMeasurements: {
       crontab: "* * * * * *" // fire an update every minute
       // ...other args if needed

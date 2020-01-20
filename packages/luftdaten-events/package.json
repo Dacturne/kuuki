@@ -1,12 +1,13 @@
 {
   "name": "@kuuki/luftdaten-events",
-  "version": "1.0.3",
+  "version": "1.0.10",
   "description": "An enhanced version of @kuuki/luftdaten with events support",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "prebuild": "rimraf dist",
     "build": "./node_modules/.bin/tsc",
+    "postbuild": "npm run docs",
     "dev": "./node_modules/.bin/tsnd --ignore-watch node_modules --respawn --clear --no-notify ./src --watch",
     "docs": "rimraf ./../../docs/luftdaten-events && typedoc --out ./../../docs/luftdaten-events src"
   },
