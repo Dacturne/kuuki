@@ -6,9 +6,9 @@ const repo = new luftdatenEvents.MeasurementRepository();
 const lde = new luftdatenEvents.LuftdatenEventsService(ld, repo);
 
 (async () => {
-  lde.track({
+  await lde.track({
     getLatestMeasurements: {
-      crontab: "* * * * * *" // fire an update every minute
+      crontab: "* * * * *" // fire an update every minute
     }
   });
   lde.on("measurement", m => {
