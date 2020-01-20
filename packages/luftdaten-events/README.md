@@ -46,7 +46,7 @@ const repo = new luftdatenEvents.MeasurementRepository();
 const lde = new luftdatenEvents.LuftdatenEventsService(ld, repo);
 
 (async () => {
-  lde.track({ // insert only the endpoints you want to poll for
+  await lde.track({ // insert only the endpoints you want to poll for
     getLatestMeasurements: {
       crontab: "* * * * * *" // fire an update every minute
       // ...other args if needed
