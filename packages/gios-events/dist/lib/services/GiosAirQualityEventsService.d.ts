@@ -3,6 +3,9 @@ import { EventEmitter } from "events";
 import { GiosAirQualityService } from "@kuuki/gios";
 import { SensorDataRaw } from "@kuuki/gios/dist/lib/models/SensorDataRaw";
 import { RefreshOptions } from "../models/RefreshOptions";
+import { StationRepository } from "../repositories/StationRepository";
+import { SensorRepository } from "../repositories/SensorRepository";
+import { MeasurementRepository } from "../repositories/MeasurementRepository";
 import { MeasurementStationSensorRaw } from "@kuuki/gios/dist/lib/models/MeasurementStationSensorRaw";
 import { MeasurementStationRaw } from "@kuuki/gios/dist/lib/models/MeasurementStationRaw";
 import { Measurement } from "../models/Measurement";
@@ -35,7 +38,7 @@ export declare class GiosAirQualityEventsService extends EventEmitter {
     private _stationRepository;
     private _sensorRepository;
     private _measurementRepository;
-    constructor(api: GiosAirQualityService, refreshOptions: RefreshOptions);
+    constructor(api: GiosAirQualityService, refreshOptions: RefreshOptions, _stationRepository?: StationRepository, _sensorRepository?: SensorRepository, _measurementRepository?: MeasurementRepository);
     initialize(): Promise<void>;
     getStations(): Promise<MeasurementStationRaw[]>;
     findStation(id: number): Promise<MeasurementStationRaw[]>;

@@ -41,11 +41,14 @@ export declare interface GiosAirQualityEventsService {
 }
 
 export class GiosAirQualityEventsService extends EventEmitter {
-  private _stationRepository = new StationRepository(ttl(levelup(leveldown("./stations"))));
-  private _sensorRepository = new SensorRepository(ttl(levelup(leveldown("./sensors"))));
-  private _measurementRepository = new MeasurementRepository(ttl(levelup(leveldown("./measurements"))));
 
-  constructor(private api: GiosAirQualityService, private refreshOptions: RefreshOptions) {
+  constructor(
+    private api: GiosAirQualityService,
+    private refreshOptions: RefreshOptions,
+    private _stationRepository: StationRepository = new StationRepository(ttl(levelup(leveldown("./db/stations")))),
+    private _sensorRepository: SensorRepository = new SensorRepository(ttl(levelup(leveldown("./db/sensors")))),
+    private _measurementRepository: MeasurementRepository = new MeasurementRepository(ttl(levelup(leveldown("./db/measurements"))))
+  ) {
     super();
   }
 
@@ -110,24 +113,37 @@ export class GiosAirQualityEventsService extends EventEmitter {
   }
 
   public async refreshMeasurements(): Promise<void> {
+    let inserts = 0;
+    let upserts = 0;
     const sensors = await this._sensorRepository.getAll();
     for (const sensor of sensors) {
       // Grab fresh data
       const sensorDataRaw = await this.api.getMeasurements(sensor.id);
       for (const measurement of sensorDataRaw.values) {
         const key: MeasurementPartitioningKey = { sensorId: sensor.id, dateTime: measurement.date };
-        if (!await this._measurementRepository.exists(key)) {
-          await this._measurementRepository.create(key, measurement);
+        const exists = await this._measurementRepository.exists(key);
+
+        if (exists === false) {
+          const b = await this._measurementRepository.create(key, measurement);
+          // console.log("did it create it? ", b);
           this.emit("measurement", sensor.stationId, sensor, measurement);
+          inserts++;
         } else {
           // check if data changed
           const latest = await this._measurementRepository.find({
-            dateTime: measurement.date,
-            sensorId: sensor.id
+            sensorId: sensor.id,
+            dateTime: measurement.date
           });
           // compare latest value with the freshly arrived one
           if (latest[0].value !== measurement.value) {
+            console.log({
+              prior: latest[0].value,
+              next: measurement.value
+            })
+            // this._measurementRepository.update(key, measurement);
+            this._measurementRepository.create(key, measurement);
             this.emit("measurement_update", sensor.stationId, sensor, measurement);
+            upserts++;
           }
         }
       }

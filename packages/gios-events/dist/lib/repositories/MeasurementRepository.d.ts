@@ -1,6 +1,9 @@
 import { KVRepository } from "./KVRepository";
 import ttl from "level-ttl";
 import { Measurement } from "../models/Measurement";
+/**
+ * Warning: Preserve the order of properties to maintain a searchable key
+ */
 export declare type MeasurementPartitioningKey = {
     sensorId: number;
     dateTime: string;

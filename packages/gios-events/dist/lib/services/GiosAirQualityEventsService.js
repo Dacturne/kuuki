@@ -22,13 +22,13 @@ const levelup_1 = __importDefault(require("levelup"));
 const leveldown_1 = __importDefault(require("leveldown"));
 const level_ttl_1 = __importDefault(require("level-ttl"));
 class GiosAirQualityEventsService extends events_1.EventEmitter {
-    constructor(api, refreshOptions) {
+    constructor(api, refreshOptions, _stationRepository = new StationRepository_1.StationRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./db/stations")))), _sensorRepository = new SensorRepository_1.SensorRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./db/sensors")))), _measurementRepository = new MeasurementRepository_1.MeasurementRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./db/measurements"))))) {
         super();
         this.api = api;
         this.refreshOptions = refreshOptions;
-        this._stationRepository = new StationRepository_1.StationRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./stations"))));
-        this._sensorRepository = new SensorRepository_1.SensorRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./sensors"))));
-        this._measurementRepository = new MeasurementRepository_1.MeasurementRepository(level_ttl_1.default(levelup_1.default(leveldown_1.default("./measurements"))));
+        this._stationRepository = _stationRepository;
+        this._sensorRepository = _sensorRepository;
+        this._measurementRepository = _measurementRepository;
     }
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -100,18 +100,38 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     }
     refreshMeasurements() {
         return __awaiter(this, void 0, void 0, function* () {
+            let inserts = 0;
+            let upserts = 0;
             const sensors = yield this._sensorRepository.getAll();
             for (const sensor of sensors) {
                 // Grab fresh data
                 const sensorDataRaw = yield this.api.getMeasurements(sensor.id);
                 for (const measurement of sensorDataRaw.values) {
                     const key = { sensorId: sensor.id, dateTime: measurement.date };
-                    if (!(yield this._measurementRepository.exists(key))) {
-                        yield this._measurementRepository.create(key, measurement);
+                    const exists = yield this._measurementRepository.exists(key);
+                    if (exists === false) {
+                        const b = yield this._measurementRepository.create(key, measurement);
+                        // console.log("did it create it? ", b);
                         this.emit("measurement", sensor.stationId, sensor, measurement);
+                        inserts++;
                     }
                     else {
                         // check if data changed
+                        const latest = yield this._measurementRepository.find({
+                            sensorId: sensor.id,
+                            dateTime: measurement.date
+                        });
+                        // compare latest value with the freshly arrived one
+                        if (latest[0].value !== measurement.value) {
+                            console.log({
+                                prior: latest[0].value,
+                                next: measurement.value
+                            });
+                            // this._measurementRepository.update(key, measurement);
+                            this._measurementRepository.create(key, measurement);
+                            this.emit("measurement_update", sensor.stationId, sensor, measurement);
+                            upserts++;
+                        }
                     }
                 }
             }
