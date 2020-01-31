@@ -124,8 +124,7 @@ export class GiosAirQualityEventsService extends EventEmitter {
         const exists = await this._measurementRepository.exists(key);
 
         if (exists === false) {
-          const b = await this._measurementRepository.create(key, measurement);
-          // console.log("did it create it? ", b);
+          await this._measurementRepository.create(key, measurement);
           this.emit("measurement", sensor.stationId, sensor, measurement);
           inserts++;
         } else {
@@ -136,10 +135,6 @@ export class GiosAirQualityEventsService extends EventEmitter {
           });
           // compare latest value with the freshly arrived one
           if (latest[0].value !== measurement.value) {
-            console.log({
-              prior: latest[0].value,
-              next: measurement.value
-            })
             // this._measurementRepository.update(key, measurement);
             this._measurementRepository.create(key, measurement);
             this.emit("measurement_update", sensor.stationId, sensor, measurement);

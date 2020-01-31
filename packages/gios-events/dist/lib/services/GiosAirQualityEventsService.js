@@ -110,8 +110,7 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                     const key = { sensorId: sensor.id, dateTime: measurement.date };
                     const exists = yield this._measurementRepository.exists(key);
                     if (exists === false) {
-                        const b = yield this._measurementRepository.create(key, measurement);
-                        // console.log("did it create it? ", b);
+                        yield this._measurementRepository.create(key, measurement);
                         this.emit("measurement", sensor.stationId, sensor, measurement);
                         inserts++;
                     }
@@ -123,10 +122,6 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                         });
                         // compare latest value with the freshly arrived one
                         if (latest[0].value !== measurement.value) {
-                            console.log({
-                                prior: latest[0].value,
-                                next: measurement.value
-                            });
                             // this._measurementRepository.update(key, measurement);
                             this._measurementRepository.create(key, measurement);
                             this.emit("measurement_update", sensor.stationId, sensor, measurement);
