@@ -12,8 +12,8 @@ This library provides the following functionality:
   - [x] Retrieve all measurement station sensors from the local state.
   - [x] Retrieve latest measurements of a sensor (up to 62h back) with time series granularity of 1 hour (from the local state).
   - [ ] Retrieve air quality index for a station.
-  
-Provided events: 
+
+Provided events:
   - [x] `stations_refreshed` - Stations refreshed event.
   - [x] `station_joined` - New station joined event.
   - [x] `station_left` - Station left event.
@@ -27,7 +27,7 @@ Provided events:
   - [ ] `error` - TODO
 
 ## About
-This library focuses on providing a strictly typed API definition and access to `EventEmitter`, exposing further functionality. 
+This library focuses on providing a strictly typed API definition and access to `EventEmitter`, exposing further functionality.
 What's basically happening is, that the state is stored locally and updated once in a while, providing you with highly flexible events, that you can attach event listeners to.
 If you need something less sophisticated, check out [`@kuuki/gios`](https://dacturne.github.io/kuuki/gios/).
 
@@ -41,32 +41,34 @@ $ npm install --save @kuuki/gios @kuuki/gios-events
 
 ## Usage
 ```javascript
-const gios = require("@kuuki/gios");
-const giosEvents = require("@kuuki/gios-events");
-
 (async() => {
   const eventApi = new giosEvents.GiosAirQualityEventsService(
     new gios.GiosAirQualityService(),
     {
-      stations: "*/30 * * * *", // every 30 minutes
-      sensors: "*/30 * * * *",
-      measurements: "*/10 * * * *"
+      stations:     "*/15 * * * *", // every 10 minutes
+      sensors:      "*/15 * * * *",
+      measurements: "*/5 * * * *"
     }
   );
   await eventApi.initialize();
-  // Any measurements that have never been registered in the state and are not null
+  // any measurements that have never been registered and are not null
   eventApi.on("measurement", (stationId, sensor, measurement) => {
+    // find the station (to gather more metadata)
+    const station = eventApi.findStation(stationId);
     console.log({
-      sensor: sensor.identifier.id,
-      val: measurement.value,
+      station,
+      sensor,
+      measurement,
       op: "insert"
     });
   })
-  // Any measurements that have already been registered, but a change in value has occured
   eventApi.on("measurement_update", (stationId, sensor, measurement) => {
+    // find the station (to gather more metadata)
+    const station = eventApi.findStation(stationId);
     console.log({
-      sensor: sensor.identifier.id,
-      val: measurement.value,
+      station,
+      sensor,
+      measurement,
       op: "upsert"
     });
   })
