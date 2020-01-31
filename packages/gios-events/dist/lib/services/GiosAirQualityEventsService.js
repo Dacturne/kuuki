@@ -100,8 +100,6 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     }
     refreshMeasurements() {
         return __awaiter(this, void 0, void 0, function* () {
-            let inserts = 0;
-            let upserts = 0;
             const sensors = yield this._sensorRepository.getAll();
             for (const sensor of sensors) {
                 // Grab fresh data
@@ -110,9 +108,10 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                     const key = { sensorId: sensor.id, dateTime: measurement.date };
                     const exists = yield this._measurementRepository.exists(key);
                     if (exists === false) {
-                        yield this._measurementRepository.create(key, measurement);
-                        this.emit("measurement", sensor.stationId, sensor, measurement);
-                        inserts++;
+                        if (measurement.value != null) {
+                            yield this._measurementRepository.create(key, measurement);
+                            this.emit("measurement", sensor.stationId, sensor, measurement);
+                        }
                     }
                     else {
                         // check if data changed
@@ -125,7 +124,6 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
                             // this._measurementRepository.update(key, measurement);
                             this._measurementRepository.create(key, measurement);
                             this.emit("measurement_update", sensor.stationId, sensor, measurement);
-                            upserts++;
                         }
                     }
                 }
