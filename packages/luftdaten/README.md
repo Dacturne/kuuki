@@ -1,7 +1,9 @@
-# `@kuuki/luftdaten`
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ![GitHub](https://img.shields.io/github/license/dacturne/kuuki)
 [![Coverage Status](https://coveralls.io/repos/github/Dacturne/kuuki/badge.svg?branch=master)](https://coveralls.io/github/Dacturne/kuuki?branch=master)
+
+<p align="center"><img src="./../../kuuki.svg" width="150" alt="Kuuki logo"></p>
+<h1 align="center"><pre>@kuuki/luftdaten</pre></h1>
 
 `kuuki/luftdaten` is a simple API wrapper for Luftdaten, written in TypeScript.
 
