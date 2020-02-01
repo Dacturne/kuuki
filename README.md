@@ -1,6 +1,8 @@
-# `@kuuki`
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ![GitHub](https://img.shields.io/github/license/dacturne/kuuki)
+
+<p align="center"><img src="./kuuki.svg" width="150" alt="Kuuki logo"></p>
+<h1 align="center"><pre>@kuuki</pre></h1>
 
 A project that aims to improve the accessibility to open data APIs in the environmental sector regarding air quality.
 
