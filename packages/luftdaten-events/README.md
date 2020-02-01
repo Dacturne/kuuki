@@ -1,6 +1,8 @@
-# `@kuuki/luftdaten-events`
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ![GitHub](https://img.shields.io/github/license/dacturne/kuuki)
+
+<p align="center"><img src="./../../kuuki.svg" width="150" alt="Kuuki logo"></p>
+<h1 align="center"><pre>@kuuki/luftdaten-events</pre></h1>
 
 `kuuki/luftdaten-events` is an event based API wrapper for Luftdaten, written in TypeScript.
 
