@@ -19,7 +19,7 @@ export class StationRepository extends KVRepository<
   public async find(key: MeasurementStationPartitioningKey): Promise<MeasurementStationRaw[]> {
     try {
       const response = await this._db.get(JSON.stringify(key));
-      return Promise.resolve([response]);
+      return Promise.resolve([JSON.parse(response)]);
     } catch(error) {
       return Promise.reject(error);
     }
