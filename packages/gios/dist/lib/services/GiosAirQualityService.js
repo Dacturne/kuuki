@@ -68,8 +68,7 @@ class GiosAirQualityService {
         });
     }
     bootstrapEndpoints(config) {
-        var _a, _b;
-        if ((_a = config) === null || _a === void 0 ? void 0 : _a.domain) {
+        if (config === null || config === void 0 ? void 0 : config.domain) {
             if (utils_1.isTrailingSlash(config.domain)) {
                 // remove trailing slashes
                 this.domain = config.domain.slice(0, -1);
@@ -89,7 +88,7 @@ class GiosAirQualityService {
             sensorDataPath: config_1.default.SENSOR_DATA_PATH,
         };
         // Override defaults
-        if ((_b = config) === null || _b === void 0 ? void 0 : _b.paths) {
+        if (config === null || config === void 0 ? void 0 : config.paths) {
             Object.keys(config.paths).forEach(path => {
                 this.paths[path] = config.paths[path];
             });

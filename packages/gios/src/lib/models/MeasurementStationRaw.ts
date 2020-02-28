@@ -29,7 +29,7 @@ export type MeasurementStationRaw = {
     name: string;
     commune: {
       communeName: string;
-      distrctName: string;
+      districtName: string;
       provinceName: string;
     };
   };
