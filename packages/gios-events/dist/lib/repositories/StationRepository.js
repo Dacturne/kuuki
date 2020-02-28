@@ -25,7 +25,7 @@ class StationRepository extends KVRepository_1.KVRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const response = yield this._db.get(JSON.stringify(key));
-                return Promise.resolve([response]);
+                return Promise.resolve([JSON.parse(response)]);
             }
             catch (error) {
                 return Promise.reject(error);
