@@ -1,6 +1,6 @@
 {
   "name": "@kuuki/gios",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A simple api wrapper written in typescript for gios (CHIEF INSPECTORATE FOR ENVIRONMENTAL PROTECTION).",
   "main": "dist/index.js",
   "scripts": {
