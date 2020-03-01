@@ -29,9 +29,7 @@ export class StationRepository extends KVRepository<
     try {
       await this._db.put(
         JSON.stringify(key),
-        JSON.stringify(item), {
-          ttl: 1000 * 60 * 60 * 73
-        }
+        JSON.stringify(item)
       );
       return Promise.resolve(true);
     } catch(error) {

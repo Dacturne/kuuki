@@ -35,9 +35,7 @@ class SensorRepository extends KVRepository_1.KVRepository {
     create(key, item) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                yield this._db.put(JSON.stringify(key), JSON.stringify(item), {
-                    ttl: 1000 * 60 * 60 * 73
-                });
+                yield this._db.put(JSON.stringify(key), JSON.stringify(item));
                 return Promise.resolve(true);
             }
             catch (error) {
