@@ -71,7 +71,12 @@ export class GiosAirQualityEventsService extends EventEmitter {
   }
 
   public async refreshStations(): Promise<void> {
-    const refreshedStations = await this.api.getStations();
+    let refreshedStations;
+    try {
+      refreshedStations = await this.api.getStations();
+    } catch(error) {
+      refreshedStations = [];
+    }
     for (const station of refreshedStations) {
       if (!await this._stationRepository.exists({ identifier: station.id })) {
         await this._stationRepository.create({identifier: station.id}, station);
@@ -91,7 +96,12 @@ export class GiosAirQualityEventsService extends EventEmitter {
   public async refreshSensors(): Promise<void> {
     const stations = await this._stationRepository.getAll();
     for(const station of stations) {
-      const refreshedSensors = await this.api.getSensors(station.id);
+      let refreshedSensors;
+      try {
+        refreshedSensors = await this.api.getSensors(station.id);
+      } catch(err) {
+        refreshedSensors = [];
+      }
       const prevIds = (await this.getSensors())?.map(sensor => sensor.id);
       const newIds = refreshedSensors?.map(sensor => sensor.id);
       const missingIds = prevIds?.filter(id => !newIds.includes(id));
@@ -116,27 +126,34 @@ export class GiosAirQualityEventsService extends EventEmitter {
     const sensors = await this._sensorRepository.getAll();
     for (const sensor of sensors) {
       // Grab fresh data
-      const sensorDataRaw = await this.api.getMeasurements(sensor.id);
-      for (const measurement of sensorDataRaw.values) {
-        const key: MeasurementPartitioningKey = { sensorId: sensor.id, dateTime: measurement.date };
-        const exists = await this._measurementRepository.exists(key);
+      let sensorDataRaw;
+      try {
+        sensorDataRaw = await this.api.getMeasurements(sensor.id);
+      } catch(error) {
+        sensorDataRaw = null;
+      }
+      if (sensorDataRaw) {
+        for (const measurement of sensorDataRaw.values) {
+          const key: MeasurementPartitioningKey = { sensorId: sensor.id, dateTime: measurement.date };
+          const exists = await this._measurementRepository.exists(key);
 
-        if (exists === false) {
-          if (measurement.value != null) {
-            await this._measurementRepository.create(key, measurement);
-            this.emit("measurement", sensor.stationId, sensor, measurement);
-          }
-        } else {
-          // check if data changed
-          const latest = await this._measurementRepository.find({
-            sensorId: sensor.id,
-            dateTime: measurement.date
-          });
-          // compare latest value with the freshly arrived one
-          if (latest[0].value !== measurement.value) {
-            // this._measurementRepository.update(key, measurement);
-            this._measurementRepository.create(key, measurement);
-            this.emit("measurement_update", sensor.stationId, sensor, measurement);
+          if (exists === false) {
+            if (measurement.value != null) {
+              await this._measurementRepository.create(key, measurement);
+              this.emit("measurement", sensor.stationId, sensor, measurement);
+            }
+          } else {
+            // check if data changed
+            const latest = await this._measurementRepository.find({
+              sensorId: sensor.id,
+              dateTime: measurement.date
+            });
+            // compare latest value with the freshly arrived one
+            if (latest[0].value !== measurement.value) {
+              // this._measurementRepository.update(key, measurement);
+              this._measurementRepository.create(key, measurement);
+              this.emit("measurement_update", sensor.stationId, sensor, measurement);
+            }
           }
         }
       }

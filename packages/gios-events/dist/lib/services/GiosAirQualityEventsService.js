@@ -55,7 +55,13 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
     refreshStations() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const refreshedStations = yield this.api.getStations();
+            let refreshedStations;
+            try {
+                refreshedStations = yield this.api.getStations();
+            }
+            catch (error) {
+                refreshedStations = [];
+            }
             for (const station of refreshedStations) {
                 if (!(yield this._stationRepository.exists({ identifier: station.id }))) {
                     yield this._stationRepository.create({ identifier: station.id }, station);
@@ -77,7 +83,13 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
         return __awaiter(this, void 0, void 0, function* () {
             const stations = yield this._stationRepository.getAll();
             for (const station of stations) {
-                const refreshedSensors = yield this.api.getSensors(station.id);
+                let refreshedSensors;
+                try {
+                    refreshedSensors = yield this.api.getSensors(station.id);
+                }
+                catch (err) {
+                    refreshedSensors = [];
+                }
                 const prevIds = (_a = (yield this.getSensors())) === null || _a === void 0 ? void 0 : _a.map(sensor => sensor.id);
                 const newIds = refreshedSensors === null || refreshedSensors === void 0 ? void 0 : refreshedSensors.map(sensor => sensor.id);
                 const missingIds = prevIds === null || prevIds === void 0 ? void 0 : prevIds.filter(id => !newIds.includes(id));
@@ -103,27 +115,35 @@ class GiosAirQualityEventsService extends events_1.EventEmitter {
             const sensors = yield this._sensorRepository.getAll();
             for (const sensor of sensors) {
                 // Grab fresh data
-                const sensorDataRaw = yield this.api.getMeasurements(sensor.id);
-                for (const measurement of sensorDataRaw.values) {
-                    const key = { sensorId: sensor.id, dateTime: measurement.date };
-                    const exists = yield this._measurementRepository.exists(key);
-                    if (exists === false) {
-                        if (measurement.value != null) {
-                            yield this._measurementRepository.create(key, measurement);
-                            this.emit("measurement", sensor.stationId, sensor, measurement);
+                let sensorDataRaw;
+                try {
+                    sensorDataRaw = yield this.api.getMeasurements(sensor.id);
+                }
+                catch (error) {
+                    sensorDataRaw = null;
+                }
+                if (sensorDataRaw) {
+                    for (const measurement of sensorDataRaw.values) {
+                        const key = { sensorId: sensor.id, dateTime: measurement.date };
+                        const exists = yield this._measurementRepository.exists(key);
+                        if (exists === false) {
+                            if (measurement.value != null) {
+                                yield this._measurementRepository.create(key, measurement);
+                                this.emit("measurement", sensor.stationId, sensor, measurement);
+                            }
                         }
-                    }
-                    else {
-                        // check if data changed
-                        const latest = yield this._measurementRepository.find({
-                            sensorId: sensor.id,
-                            dateTime: measurement.date
-                        });
-                        // compare latest value with the freshly arrived one
-                        if (latest[0].value !== measurement.value) {
-                            // this._measurementRepository.update(key, measurement);
-                            this._measurementRepository.create(key, measurement);
-                            this.emit("measurement_update", sensor.stationId, sensor, measurement);
+                        else {
+                            // check if data changed
+                            const latest = yield this._measurementRepository.find({
+                                sensorId: sensor.id,
+                                dateTime: measurement.date
+                            });
+                            // compare latest value with the freshly arrived one
+                            if (latest[0].value !== measurement.value) {
+                                // this._measurementRepository.update(key, measurement);
+                                this._measurementRepository.create(key, measurement);
+                                this.emit("measurement_update", sensor.stationId, sensor, measurement);
+                            }
                         }
                     }
                 }

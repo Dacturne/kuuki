@@ -13,20 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = __importDefault(require("node-fetch"));
+const fetch_retry_1 = __importDefault(require("fetch-retry"));
 const config_1 = __importDefault(require("../config"));
 const utils_1 = require("../utils");
-const fetchRetry = (url, options, n) => __awaiter(void 0, void 0, void 0, function* () {
-    for (let i = 0; i < n; i++) {
-        try {
-            return yield node_fetch_1.default(url, options);
-        }
-        catch (err) {
-            const isLastAttempt = i + 1 === n;
-            if (isLastAttempt)
-                throw err;
-        }
-    }
-});
+const defaultFetcher = (url) => {
+    return fetch_retry_1.default(node_fetch_1.default)(url, {
+        retries: 5,
+        retryDelay: 1000,
+    });
+};
 class GiosAirQualityService {
     constructor(config) {
         this.bootstrapEndpoints(config);
@@ -34,7 +29,10 @@ class GiosAirQualityService {
     getStations() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield fetchRetry(`${this.domain}/${config_1.default.BASE_PATH}/${this.paths.allStationsPath}`, {}, 5);
+                const response = yield defaultFetcher(`${this.domain}/${config_1.default.BASE_PATH}/${this.paths.allStationsPath}`);
+                if (response.status !== 200) {
+                    return Promise.reject("GIOS_FAILURE");
+                }
                 const stations = yield response.json();
                 return stations;
             }
@@ -46,7 +44,10 @@ class GiosAirQualityService {
     getSensors(stationId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield fetchRetry(`${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`, {}, 5);
+                const response = yield defaultFetcher(`${this.domain}/${this.paths.basePath}/${this.paths.sensorsPath}/${stationId}`);
+                if (response.status !== 200) {
+                    return Promise.reject("GIOS_FAILURE");
+                }
                 const sensors = yield response.json();
                 return sensors;
             }
@@ -58,7 +59,10 @@ class GiosAirQualityService {
     getMeasurements(sensorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield fetchRetry(`${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`, {}, 5);
+                const response = yield defaultFetcher(`${this.domain}/${this.paths.basePath}/${this.paths.sensorDataPath}/${sensorId}`);
+                if (response.status !== 200) {
+                    return Promise.reject("GIOS_FAILURE");
+                }
                 const data = yield response.json();
                 return data;
             }

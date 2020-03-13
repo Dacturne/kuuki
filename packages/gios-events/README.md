@@ -47,7 +47,7 @@ $ npm install --save @kuuki/gios @kuuki/gios-events
   const eventApi = new giosEvents.GiosAirQualityEventsService(
     new gios.GiosAirQualityService(),
     {
-      stations:     "*/15 * * * *", // every 10 minutes
+      stations:     "*/15 * * * *", // every 15 minutes
       sensors:      "*/15 * * * *",
       measurements: "*/5 * * * *"
     }
