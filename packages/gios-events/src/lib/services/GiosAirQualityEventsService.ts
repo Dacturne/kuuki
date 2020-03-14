@@ -151,8 +151,10 @@ export class GiosAirQualityEventsService extends EventEmitter {
             // compare latest value with the freshly arrived one
             if (latest[0].value !== measurement.value) {
               // this._measurementRepository.update(key, measurement);
-              this._measurementRepository.create(key, measurement);
-              this.emit("measurement_update", sensor.stationId, sensor, measurement);
+              if (measurement.value != null) {
+                this._measurementRepository.create(key, measurement);
+                this.emit("measurement_update", sensor.stationId, sensor, measurement);
+              }
             }
           }
         }
